@@ -1,4 +1,4 @@
-package cu
+package theme
 
 import "gioui.org/font"
 

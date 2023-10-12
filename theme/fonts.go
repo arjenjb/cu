@@ -1,4 +1,4 @@
-package cu
+package theme
 
 import (
 	_ "embed"

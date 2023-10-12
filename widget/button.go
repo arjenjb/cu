@@ -1,4 +1,4 @@
-package cu
+package widget
 
 import (
 	"gioui.org/font"
@@ -8,13 +8,14 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/text"
 	"gioui.org/widget"
+	theme2 "github.com/arjenjb/cu/theme"
 	"image/color"
 )
 
 type ButtonWidget struct {
 	label     string
 	clickable *widget.Clickable
-	theme     *Theme
+	theme     *theme2.Theme
 }
 
 func (b *ButtonWidget) Layout(ctx layout.Context) layout.Dimensions {
@@ -41,7 +42,7 @@ func (b *ButtonWidget) Layout(ctx layout.Context) layout.Dimensions {
 	})
 }
 
-func Button(t *Theme, clickable *widget.Clickable, label string) *ButtonWidget {
+func Button(t *theme2.Theme, clickable *widget.Clickable, label string) *ButtonWidget {
 	return &ButtonWidget{
 		theme:     t,
 		label:     label,

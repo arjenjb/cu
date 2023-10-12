@@ -1,4 +1,4 @@
-package cu
+package widget
 
 import (
 	"gioui.org/io/semantic"
