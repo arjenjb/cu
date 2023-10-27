@@ -71,7 +71,7 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 					paint.Fill(gtx.Ops, background)
 				}
 
-				if !b.Primary {
+				if !b.Primary || b.Disabled {
 					borderColor = borderColorNormal
 					w := gtx.Dp(1)
 
