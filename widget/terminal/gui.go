@@ -1,7 +1,6 @@
 package terminal
 
 import (
-	"cu"
 	_ "embed"
 	"gioui.org/io/pointer"
 	"gioui.org/layout"
@@ -10,6 +9,7 @@ import (
 	"gioui.org/text"
 	"gioui.org/unit"
 	"gioui.org/x/styledtext"
+	. "github.com/arjenjb/cu"
 	"golang.org/x/image/math/fixed"
 	"image"
 	"image/color"
@@ -18,7 +18,7 @@ import (
 
 var scrollTag = new(bool) // We could use &pressed for this instead.
 
-func Console(th *cu.Theme, screen *Screen) layout.Widget {
+func Console(th *Theme, screen *Screen) layout.Widget {
 	offsetX := unit.Dp(10)
 	offsetY := unit.Dp(6)
 

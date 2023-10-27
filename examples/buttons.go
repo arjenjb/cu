@@ -1,10 +1,10 @@
 package main
 
 import (
-	"cu"
-	"cu/widget"
 	"gioui.org/layout"
 	widget2 "gioui.org/widget"
+	"github.com/arjenjb/cu"
+	"github.com/arjenjb/cu/widget"
 )
 
 var button1 widget2.Clickable

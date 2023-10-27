@@ -1,8 +1,6 @@
 package main
 
 import (
-	"cu"
-	"cu/widget/terminal"
 	"fmt"
 	"gioui.org/app"
 	"gioui.org/io/system"
@@ -10,6 +8,8 @@ import (
 	"gioui.org/op"
 	"gioui.org/unit"
 	"gioui.org/widget"
+	"github.com/arjenjb/cu"
+	"github.com/arjenjb/cu/widget/terminal"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"io"

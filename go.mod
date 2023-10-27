@@ -5,7 +5,6 @@ go 1.21.0
 require (
 	gioui.org v0.3.1
 	gioui.org/x v0.3.1
-	github.com/ag5/go-commons v1.43.0
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/image v0.7.0

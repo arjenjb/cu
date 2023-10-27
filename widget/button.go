@@ -1,12 +1,12 @@
 package widget
 
 import (
-	theme2 "cu"
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/op/paint"
 	"gioui.org/text"
 	"gioui.org/widget"
+	. "github.com/arjenjb/cu"
 	"image/color"
 )
 
@@ -29,7 +29,7 @@ var buttonTextColorDisabled = color.NRGBA{
 type ButtonWidget struct {
 	label     string
 	clickable *widget.Clickable
-	theme     *theme2.Theme
+	theme     *Theme
 	options   buttonOptions
 }
 
@@ -53,7 +53,7 @@ func (b *ButtonWidget) Layout(gtx layout.Context) layout.Dimensions {
 	}
 
 	buttonText := func(gtx layout.Context) layout.Dimensions {
-		return b.theme.Mh(theme2.Scaled(1), func(gtx layout.Context) layout.Dimensions {
+		return b.theme.Mh(Scaled(1), func(gtx layout.Context) layout.Dimensions {
 			colMacro := op.Record(gtx.Ops)
 			paint.ColorOp{Color: color}.Add(gtx.Ops)
 			return widget.Label{Alignment: text.Middle}.Layout(gtx, b.theme.Shaper, b.theme.Font.SansSerif, fontSize, b.label, colMacro.Stop())
@@ -61,7 +61,7 @@ func (b *ButtonWidget) Layout(gtx layout.Context) layout.Dimensions {
 		})(gtx)
 	}
 
-	return ButtonLayoutStyle{
+	return ButtonStyle{
 		CornerRadius: 4,
 		Button:       b.clickable,
 		Disabled:     b.options.disabled,
@@ -95,7 +95,7 @@ type buttonOptions struct {
 	disabled bool
 }
 
-func Button(t *theme2.Theme, clickable *widget.Clickable, label string, options ...ButtonOptions) *ButtonWidget {
+func Button(t *Theme, clickable *widget.Clickable, label string, options ...ButtonOptions) *ButtonWidget {
 	o := buttonOptions{
 		primary:  false,
 		big:      false,

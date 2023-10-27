@@ -1,12 +1,12 @@
 package main
 
 import (
-	"cu"
 	"gioui.org/app"
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/unit"
+	"github.com/arjenjb/cu"
 )
 
 func main() {

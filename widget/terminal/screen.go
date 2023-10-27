@@ -2,7 +2,6 @@ package terminal
 
 import (
 	"gioui.org/font"
-	"github.com/ag5/go-commons/c5"
 	"image/color"
 	"math"
 	"strings"
@@ -53,9 +52,12 @@ type Line struct {
 }
 
 func (l Line) EffectiveLines() int {
-	return int(math.Floor(float64(c5.Sum(c5.Map(l.runs, func(e Run) int {
-		return len(e.text)
-	}))) / float64(l.width)))
+	n := 0
+	for _, each := range l.runs {
+		n += len(each.text)
+	}
+
+	return int(math.Floor(float64(n) / float64(l.width)))
 }
 
 func writeText(in []Run, text string, x int, style Style) []Run {

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"cu"
-	"cu/widget"
 	"gioui.org/layout"
+	"github.com/arjenjb/cu"
+	"github.com/arjenjb/cu/widget"
 )
 
 func spinnerExample(th *cu.Theme) layout.Widget {

@@ -20,14 +20,14 @@ var colorNone = color.NRGBA{0, 0, 0, 0}
 
 var borderColorNormal = color.NRGBA{0xC9, 0xCC, 0xD6, 255}
 
-type ButtonLayoutStyle struct {
+type ButtonStyle struct {
 	CornerRadius unit.Dp
 	Disabled     bool
 	Primary      bool
 	Button       *widget.Clickable
 }
 
-func (b ButtonLayoutStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensions {
+func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensions {
 	min := gtx.Constraints.Min
 
 	btn := func(gtx layout.Context) layout.Dimensions {
