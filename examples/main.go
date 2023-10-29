@@ -28,10 +28,13 @@ func main() {
 
 					th.Background(gtx)
 
-					th.FlexColumn(cu.Gap(cu.M)).
+					th.M(cu.M, th.FlexColumn(cu.Gap(cu.M)).
 						Rigid(buttonExample(th)).
+						Rigid(th.Hr()).
 						Rigid(spinnerExample(th)).
-						Layout(gtx)
+						Rigid(th.Hr()).
+						Rigid(progressExample(th)).
+						Layout)(gtx)
 
 					e.Frame(gtx.Ops)
 				}
