@@ -12,7 +12,8 @@ import (
 )
 
 type Palette struct {
-	Text color.NRGBA
+	Text          color.NRGBA
+	TextSecondary color.NRGBA
 }
 
 type Fonts struct {
@@ -21,10 +22,13 @@ type Fonts struct {
 }
 
 type Theme struct {
-	Color    Palette
-	TextSize unit.Sp
-	Shaper   *text.Shaper
-	Font     Fonts
+	Color          Palette
+	TextSize       unit.Sp
+	TextSizeMedium unit.Sp
+	TextSizeH1     unit.Sp
+	Shaper         *text.Shaper
+	Font           Fonts
+	TextSizeH2     unit.Sp
 }
 
 type Flex struct {
@@ -174,16 +178,22 @@ func (t Theme) Background(gtx layout.Context) {
 }
 
 func NewTheme(fonts []font.FontFace) *Theme {
-	var colorText = color.NRGBA{R: 52, G: 65, B: 85, A: 0xff}
+	//var colorText = color.NRGBA{R: 52, G: 65, B: 85, A: 0xff}
+	var colorText = color.NRGBA{R: 0, G: 0, B: 0, A: 0xff}
+	var colorTextSecondary = color.NRGBA{R: 0x6C, G: 0x70, B: 0x7E, A: 0xff}
 
 	t := &Theme{
 		Shaper: text.NewShaper(text.WithCollection(fonts)),
 		Color: Palette{
-			Text: colorText,
+			Text:          colorText,
+			TextSecondary: colorTextSecondary,
 		},
-		TextSize: unit.Sp(13.0),
+		TextSize:       unit.Sp(13.0),
+		TextSizeMedium: unit.Sp(12.0),
+		TextSizeH1:     unit.Sp(20.0),
+		TextSizeH2:     unit.Sp(16.0),
 		Font: Fonts{
-			SansSerif: font.Font{Typeface: "Roboto, SF Pro, Segoe UI, Dejavu, sans-serif"},
+			SansSerif: font.Font{Typeface: "Roboto, SF Pro Text, Segoe UI, Dejavu, sans-serif"},
 			Monospace: font.Font{Typeface: "monospace"},
 		},
 	}

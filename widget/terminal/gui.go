@@ -40,7 +40,7 @@ func Console(th *Theme, screen *Screen) layout.Widget {
 			Y: charHeight*screen.Size.Y + gtx.Dp(offsetY*2+2),
 		})
 
-		return bordered(gtx, gtx.Dp(unit.Dp(1)), color.NRGBA{
+		return bordered(gtx, 1, color.NRGBA{
 			R: 0,
 			G: 0,
 			B: 0,
@@ -128,12 +128,12 @@ func Console(th *Theme, screen *Screen) layout.Widget {
 	}
 }
 
-func bordered(gtx layout.Context, width int, c color.NRGBA, f layout.Widget) layout.Dimensions {
+func bordered(gtx layout.Context, width unit.Dp, c color.NRGBA, f layout.Widget) layout.Dimensions {
 	defer clip.Rect{
 		Max: gtx.Constraints.Max,
 	}.Push(gtx.Ops).Pop()
 	paint.Fill(gtx.Ops, c)
-	return layout.UniformInset(unit.Dp(width)).Layout(gtx, f)
+	return layout.UniformInset(width).Layout(gtx, f)
 }
 
 func createSpansFrom(screen *Screen) []styledtext.SpanStyle {
