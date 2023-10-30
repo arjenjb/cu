@@ -26,9 +26,12 @@ type Theme struct {
 	TextSize       unit.Sp
 	TextSizeMedium unit.Sp
 	TextSizeH1     unit.Sp
+	TextSizeH2     unit.Sp
 	Shaper         *text.Shaper
 	Font           Fonts
-	TextSizeH2     unit.Sp
+
+	LineHeightH1 unit.Sp
+	LineHeightH2 unit.Sp
 }
 
 type Flex struct {
@@ -70,6 +73,13 @@ func (f Flex) Flexed(weight float32, w layout.Widget) Flex {
 	return f
 }
 
+func (f Flex) RigidIf(condition bool, w layout.Widget) Flex {
+	if condition {
+		return f.Rigid(w)
+	}
+	return f
+}
+
 type CuFlexOption func(w *Flex, t Theme)
 
 func Spacing(s layout.Spacing) func(w *Flex, t Theme) {
@@ -101,10 +111,10 @@ func Scaled(n float32) Unit {
 }
 
 var (
-	XS Unit = Scaled(0.33)
-	S  Unit = Scaled(0.66)
+	XS Unit = Scaled(0.25)
+	S  Unit = Scaled(0.5)
 	M  Unit = Scaled(1)
-	L  Unit = Scaled(2)
+	L  Unit = Scaled(1.33)
 )
 
 func Gap(s Unit) func(w *Flex, t Theme) {
@@ -192,6 +202,8 @@ func NewTheme(fonts []font.FontFace) *Theme {
 		TextSizeMedium: unit.Sp(12.0),
 		TextSizeH1:     unit.Sp(20.0),
 		TextSizeH2:     unit.Sp(16.0),
+		LineHeightH1:   unit.Sp(24),
+		LineHeightH2:   unit.Sp(20),
 		Font: Fonts{
 			SansSerif: font.Font{Typeface: "Roboto, SF Pro Text, Segoe UI, Dejavu, sans-serif"},
 			Monospace: font.Font{Typeface: "monospace"},

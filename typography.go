@@ -14,7 +14,7 @@ import (
 type D = layout.Dimensions
 type C = layout.Context
 
-func textWidget(t Theme, label string, size unit.Sp, weight font.Weight, alignment text.Alignment, c color.NRGBA) layout.Widget {
+func textWidget(t Theme, label string, size unit.Sp, lineHeight unit.Sp, weight font.Weight, alignment text.Alignment, c color.NRGBA) layout.Widget {
 	f := t.Font.SansSerif
 	f.Weight = weight
 
@@ -22,7 +22,8 @@ func textWidget(t Theme, label string, size unit.Sp, weight font.Weight, alignme
 		colMacro := op.Record(gtx.Ops)
 		paint.ColorOp{Color: c}.Add(gtx.Ops)
 		return widget.Label{
-			Alignment: alignment,
+			Alignment:  alignment,
+			LineHeight: lineHeight,
 		}.Layout(gtx, t.Shaper, f, size, label, colMacro.Stop())
 	}
 }
@@ -58,13 +59,17 @@ func (t Theme) Text(label string, opts ...TextOptions) layout.Widget {
 		}
 	}
 
-	return textWidget(t, label, size, weight, alignment, color)
+	return textWidget(t, label, size, 0, weight, alignment, color)
 }
 
 func (t Theme) H1(label string) layout.Widget {
-	return t.Mb(Scaled(1.2), textWidget(t, label, t.TextSize, font.Bold, text.Start, t.Color.Text))
+	return textWidget(t, label, t.TextSizeH1, t.LineHeightH1, font.Bold, text.Start, t.Color.Text)
+}
+
+func (t Theme) H2(label string) layout.Widget {
+	return textWidget(t, label, t.TextSizeH2, t.LineHeightH2, font.Bold, text.Start, t.Color.Text)
 }
 
 func (t Theme) Paragraph(label string) layout.Widget {
-	return t.Mb(M, textWidget(t, label, t.TextSize, font.Normal, text.Start, t.Color.Text))
+	return t.Mb(M, textWidget(t, label, t.TextSize, unit.Sp(18), font.Normal, text.Start, t.Color.Text))
 }
