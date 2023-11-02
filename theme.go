@@ -14,6 +14,10 @@ import (
 type Palette struct {
 	Text          color.NRGBA
 	TextSecondary color.NRGBA
+
+	// The primary highlight color
+	Primary       color.NRGBA
+	ControlBorder color.NRGBA
 }
 
 type Fonts struct {
@@ -191,12 +195,16 @@ func NewTheme(fonts []font.FontFace) *Theme {
 	//var colorText = color.NRGBA{R: 52, G: 65, B: 85, A: 0xff}
 	var colorText = color.NRGBA{R: 0, G: 0, B: 0, A: 0xff}
 	var colorTextSecondary = color.NRGBA{R: 0x6C, G: 0x70, B: 0x7E, A: 0xff}
+	var colorPrimary = color.NRGBA{59, 130, 246, 255}
+	var colorControlBorder = color.NRGBA{0xC9, 0xCC, 0xD6, 255}
 
 	t := &Theme{
 		Shaper: text.NewShaper(text.WithCollection(fonts)),
 		Color: Palette{
 			Text:          colorText,
 			TextSecondary: colorTextSecondary,
+			Primary:       colorPrimary,
+			ControlBorder: colorControlBorder,
 		},
 		TextSize:       unit.Sp(13.0),
 		TextSizeMedium: unit.Sp(12.0),

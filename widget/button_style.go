@@ -12,8 +12,9 @@ import (
 )
 
 var colorDisabled = color.NRGBA{142, 142, 147, 255}
-var colorPrimaryHovered = color.NRGBA{37, 99, 235, 255}
-var colorPrimaryFocused = color.NRGBA{29, 78, 216, 255}
+
+// var colorPrimaryHovered = color.NRGBA{37, 99, 235, 255}
+// var colorPrimaryFocused = color.NRGBA{29, 78, 216, 255}
 var colorPrimary = color.NRGBA{59, 130, 246, 255}
 var colorNormal = color.NRGBA{255, 255, 255, 255}
 var colorNone = color.NRGBA{0, 0, 0, 0}
