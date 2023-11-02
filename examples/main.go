@@ -136,7 +136,7 @@ func checkboxExample(th *cu.Theme) layout.Widget {
 	if checkable.Changed() {
 		log.Info().Msgf("Toggled: %s", If(checkable.Value, "On", "Off"))
 	}
-	
+
 	return th.FlexRow(cu.Gap(cu.XS)).
 		Rigid(Checkbox(th, &checkable, "Check the box or this label").Layout).
 		Layout
