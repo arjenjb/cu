@@ -8,6 +8,7 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/text"
 	"gioui.org/unit"
+	"image"
 	"image/color"
 )
 
@@ -49,9 +50,17 @@ func (f Flex) Layout(gtx layout.Context) layout.Dimensions {
 	if f.gap > 0 {
 		var spacer layout.Widget
 		if f.widget.Axis == layout.Horizontal {
-			spacer = HSpacer(f.gap)
+			spacer = func(gtx layout.Context) layout.Dimensions {
+				return layout.Dimensions{
+					Size: image.Point{X: gtx.Dp(f.gap)},
+				}
+			}
 		} else {
-			spacer = VSpacer(f.gap)
+			spacer = func(gtx layout.Context) layout.Dimensions {
+				return layout.Dimensions{
+					Size: image.Point{Y: gtx.Dp(f.gap)},
+				}
+			}
 		}
 
 		n := []layout.FlexChild{}
