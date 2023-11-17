@@ -3,7 +3,6 @@ package terminal
 import (
 	"gioui.org/font"
 	"image/color"
-	"math"
 	"strings"
 	"sync"
 )
@@ -49,15 +48,6 @@ func (r Run) IsEmpty() bool {
 type Line struct {
 	width int
 	runs  []Run
-}
-
-func (l Line) EffectiveLines() int {
-	n := 0
-	for _, each := range l.runs {
-		n += len(each.text)
-	}
-
-	return int(math.Floor(float64(n) / float64(l.width)))
 }
 
 func writeText(in []Run, text string, x int, style Style) []Run {

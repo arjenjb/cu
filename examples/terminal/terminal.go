@@ -89,7 +89,7 @@ func NewTerminalWindow(size terminal.Point) *TerminalWindow {
 	}
 }
 
-func xmain() {
+func main() {
 	w := NewTerminalWindow(terminal.Point{
 		X: 80,
 		Y: 20,
@@ -121,7 +121,7 @@ func xmain() {
 
 func randomString(n int) string {
 	s := make([]rune, n)
-	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	for i := 0; i < n; i++ {
 		s[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
