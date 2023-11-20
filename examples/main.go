@@ -10,6 +10,7 @@ import (
 	"github.com/arjenjb/cu"
 	widget2 "github.com/arjenjb/cu/widget"
 	"github.com/rs/zerolog/log"
+	"time"
 )
 
 var checkable widget.Bool
@@ -29,10 +30,23 @@ func checkboxExample(th *cu.Theme) layout.Widget {
 }
 
 func main() {
-	w := app.NewWindow(app.Size(unit.Dp(670), unit.Dp(524)))
+	w := app.NewWindow(app.Size(unit.Dp(670), unit.Dp(360)))
 	th := cu.NewDefaultTheme()
 
 	var ops op.Ops
+
+	var progress float32 = 0.0
+
+	// Continuously update the progress bar
+	go func() {
+		for {
+			for i := 0; i <= 1000; i++ {
+				progress = 0.001 * float32(i)
+				time.Sleep(10 * time.Millisecond)
+				w.Invalidate()
+			}
+		}
+	}()
 
 	go func() {
 		for {
@@ -54,7 +68,7 @@ func main() {
 						Rigid(th.Hr()).
 						Rigid(spinnerExample(th)).
 						Rigid(th.Hr()).
-						Rigid(progressExample(th)).
+						Rigid(progressExample(th, progress)).
 						Rigid(th.Hr()).
 						Rigid(dialogExample(th)).
 						Layout)(gtx)
