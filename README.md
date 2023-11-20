@@ -14,5 +14,9 @@ See the examples folder for some examples.
  - Checkbox cannot be disabled yet
  - Implement Dark mode
 
+## License
+
+The Jetbrains Int UI kit is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/#)
+
 [1]: https://gioui.org/
 [2]: https://www.figma.com/community/file/1227732692272811382/int-ui-kit
