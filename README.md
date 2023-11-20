@@ -6,7 +6,7 @@ A [Gioui][1] GUI widget library based on [JetBrains Int UI kit][2].
 
 See the examples folder for some examples.
 
-![example.png](examples%2Fscreenshots%2Fexample.png)]
+![example.png](examples%2Fscreenshots%2Fexample.png)
 
 ## Todo
 
