@@ -55,6 +55,8 @@ func main() {
 						Rigid(spinnerExample(th)).
 						Rigid(th.Hr()).
 						Rigid(progressExample(th)).
+						Rigid(th.Hr()).
+						Rigid(dialogExample(th)).
 						Layout)(gtx)
 
 					e.Frame(gtx.Ops)
