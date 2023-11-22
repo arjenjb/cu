@@ -37,6 +37,8 @@ func (l TerminalWindow) Open() error {
 
 	button := new(widget.Clickable)
 
+	settings := terminal.NewConsoleSettings()
+
 	for {
 		select {
 		case <-l.quitChannel:
@@ -60,7 +62,7 @@ func (l TerminalWindow) Open() error {
 					w.Perform(system.ActionClose)
 				}
 
-				terminal.Console(th, l.screen)(gtx)
+				terminal.Console(th, l.screen, settings)(gtx)
 
 				e.Frame(gtx.Ops)
 			}
@@ -109,7 +111,7 @@ func main() {
 	}()
 
 	go func() {
-		for i := 0; i < 20; i++ {
+		for i := 0; i < 200; i++ {
 			fmt.Println(randomString(82))
 		}
 	}()

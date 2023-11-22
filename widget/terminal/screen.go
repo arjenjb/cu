@@ -11,103 +11,6 @@ type Point struct {
 	X, Y int
 }
 
-type Run struct {
-	start int
-	text  string
-	style Style
-}
-
-func (r Run) end() int {
-	return r.start + len(r.text)
-}
-
-func (r Run) CopyTo(x int) Run {
-	if x > r.end() {
-		return r
-	}
-
-	return Run{
-		start: r.start,
-		text:  r.text[:x-r.start],
-		style: r.style,
-	}
-}
-
-func (r Run) CopyFrom(i int) Run {
-	return Run{
-		start: i,
-		text:  r.text[i-r.start:],
-		style: r.style,
-	}
-}
-
-func (r Run) IsEmpty() bool {
-	return len(r.text) == 0
-}
-
-type Line struct {
-	width int
-	runs  []Run
-}
-
-func writeText(in []Run, text string, x int, style Style) []Run {
-	// We want to write the given text to the screen at position x. First add the runs preceding the position of the
-	// new text. A run that overlaps with the position of the new text we only copy that part just before it.
-	var out []Run
-	var i = 0
-
-	// Check preceding
-	for i < len(in) {
-		r := in[i]
-		if r.start < x && r.end() < x {
-			out = append(out, r)
-			i++
-		} else if r.start < x {
-			out = append(out, r.CopyTo(x))
-			break
-		} else {
-			break
-		}
-	}
-
-	out = append(out, Run{
-		start: x,
-		text:  text,
-		style: style,
-	})
-
-	// Add remaining runs
-	for i < len(in) {
-		r := in[i]
-		i++
-
-		end := x + len(text)
-		if r.end() <= end {
-			continue
-		}
-
-		if r.start >= end {
-			out = append(out, r)
-		} else {
-			out = append(out, r.CopyFrom(end))
-		}
-	}
-
-	return out
-}
-
-func (l *Line) Write(text string, x int, style Style) {
-	l.runs = writeText(l.runs, text, x, style)
-}
-
-func (l *Line) String() string {
-	var sb strings.Builder
-	for _, r := range l.runs {
-		sb.WriteString(r.text)
-	}
-	return sb.String()
-}
-
 type Screen struct {
 	cursor *Point
 	Size   Point
@@ -153,6 +56,9 @@ func (s *Screen) Write(p []byte) (n int, err error) {
 }
 
 func (s *Screen) WriteNewLine() {
+	// The current line gets a line break
+	s.lines[s.cursor.Y].brk = true
+
 	s.cursor.Y++
 	s.cursor.X = 0
 
@@ -183,8 +89,6 @@ func (s *Screen) SetBold(b bool) {
 }
 
 func (s *Screen) WriteCharacters(text string) {
-	// Ensure we have a line to write to
-
 	// Split into chunks
 	for len(text) > 0 {
 		x, y := s.cursor.X, s.cursor.Y
@@ -232,19 +136,88 @@ func (s *Screen) WriteCarriageReturn() {
 func (s *Screen) VisibleLines() []Line {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.lines[s.scrollTop:min(s.scrollTop+s.Size.Y, len(s.lines))]
+
+	if s.scrollTop >= len(s.lines) {
+		s.scrollTop = len(s.lines) - 1
+	}
+
+	from := s.scrollTop
+	to := min(s.scrollTop+s.Size.Y, len(s.lines))
+
+	return s.lines[from:to]
 }
 
 func (s *Screen) appendLine() {
-	s.lines = append(s.lines, Line{
-		width: s.Size.X,
-	})
+	s.lines = append(s.lines, Line{})
 	dy := max((len(s.lines)-s.top)-s.Size.Y, 0)
 
 	if s.scrollTop == s.top {
 		s.scrollTop += dy
 	}
 	s.top += dy
+}
+
+func (s *Screen) updateWidth(width int) {
+	if width == s.Size.X {
+		return
+	}
+	var displayLines []Line
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var topTranslated, scrollTopTranslated bool
+	var newLineNumber int
+
+	for _, l := range s.VirtualLines() {
+		// rewrite top, and scrollTop if needed
+		if !topTranslated && s.top <= l.endLine {
+			topTranslated = true
+			s.top = newLineNumber
+		}
+
+		if !scrollTopTranslated && s.scrollTop <= l.endLine {
+			scrollTopTranslated = true
+			s.scrollTop = newLineNumber
+		}
+
+		// Split the line
+		newLines := l.Split(width)
+		newLineNumber += len(newLines)
+		displayLines = append(displayLines, newLines...)
+	}
+
+	s.Size.X = width
+	s.lines = displayLines
+}
+
+func (s *Screen) VirtualLines() []VirtualLine {
+	var result []VirtualLine
+
+	for i := 0; i < len(s.lines); i++ {
+		l := s.lines[i]
+
+		v := VirtualLine{
+			startLine: i,
+			endLine:   i,
+			runs:      l.runs,
+		}
+
+		// Join consecutive lines
+		for !l.brk && i+1 < len(s.lines) {
+			i++
+			l = s.lines[i]
+			v = v.AppendLine(l)
+		}
+
+		result = append(result, v)
+	}
+
+	return result
+}
+
+func (s *Screen) updateHeight(height int) {
+	s.Size.Y = height
 }
 
 func min(i int, i2 int) int {

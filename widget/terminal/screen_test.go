@@ -6,11 +6,49 @@ import (
 	"testing"
 )
 
+func Test_LineSplit(t *testing.T) {
+
+	l := VirtualLine{}
+	l.Write("123451234512345_", 5, Style{})
+
+	lines := l.Split(5)
+	assert.Len(t, lines, 5)
+}
+
+func Test_Resize(t *testing.T) {
+	s := NewScreen(Point{5, 5}, nil)
+	s.Write([]byte("123456\nAap\nBanaan"))
+	assert.Equal(t, "12345\n6\nAap\nBanaa\nn\n", s.Buffer())
+
+	s.updateWidth(10)
+	assert.Equal(t, "123456\nAap\nBanaan\n", s.Buffer())
+
+	s.updateWidth(5)
+	assert.Equal(t, "12345\n6\nAap\nBanaa\nn\n", s.Buffer())
+}
+
 func Test_overflow(t *testing.T) {
 	s := NewScreen(Point{5, 5}, nil)
 	s.Write([]byte("123456\nAap\nBanaan"))
 
+	fmt.Println("--- Small")
 	fmt.Print(s.Buffer())
+	fmt.Println("")
+
+	fmt.Println("--- Big")
+	s.updateWidth(10)
+
+	fmt.Print(s.Buffer())
+	fmt.Println("")
+
+	s.updateWidth(5)
+
+	fmt.Print(s.Buffer())
+
+	s.updateWidth(10)
+
+	fmt.Print(s.Buffer())
+
 }
 
 func Test_writeText_1(t *testing.T) {
@@ -18,8 +56,7 @@ func Test_writeText_1(t *testing.T) {
 	runs = writeText(runs, "Hello Bert", 0, Style{})
 	runs = writeText(runs, "World!", 6, Style{})
 	fmt.Print((&Line{
-		width: 80,
-		runs:  runs,
+		runs: runs,
 	}).String())
 }
 
@@ -69,6 +106,30 @@ func TestMovementCenter(t *testing.T) {
 	s.WriteString(input)
 
 	fmt.Printf("%s\n", s.Buffer())
+}
+
+func TestVirtualLines(t *testing.T) {
+	s := NewScreen(Point{2, 10}, nil)
+	s.WriteString("abc")
+	s.WriteNewLine()
+	s.WriteString("1234567")
+
+	assert.Len(t, s.Lines(), 6)
+
+	l := s.VirtualLines()
+	assert.Len(t, l, 2)
+}
+
+func TestResizeBigger(t *testing.T) {
+	s := NewScreen(Point{2, 10}, nil)
+	s.WriteString("abc")
+	s.WriteNewLine()
+	s.WriteString("1234567")
+
+	assert.Len(t, s.Lines(), 6)
+
+	s.updateWidth(10)
+	assert.Len(t, s.Lines(), 2)
 }
 
 //func TestProgressBar(t *testing.T) {
