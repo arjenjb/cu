@@ -158,6 +158,7 @@ func (s *Screen) appendLine() {
 }
 
 func (s *Screen) updateWidth(width int) {
+	// constrain the width
 	if width == s.Size.X {
 		return
 	}

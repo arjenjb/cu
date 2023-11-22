@@ -36,8 +36,7 @@ func (l TerminalWindow) Open() error {
 	var ops op.Ops
 
 	button := new(widget.Clickable)
-
-	settings := terminal.NewConsoleSettings()
+	settings := terminal.NewConsoleSettings(terminal.MaxSize(100, 30))
 
 	for {
 		select {
