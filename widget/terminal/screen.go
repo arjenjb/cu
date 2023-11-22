@@ -221,13 +221,6 @@ func (s *Screen) updateHeight(height int) {
 	s.Size.Y = height
 }
 
-func min(i int, i2 int) int {
-	if i < i2 {
-		return i
-	}
-	return i2
-}
-
 func NewScreen(size Point, updatedChannel chan interface{}) *Screen {
 	// background color
 	defaults := Defaults{
