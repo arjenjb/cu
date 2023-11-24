@@ -57,13 +57,14 @@ func (s *Screen) Write(p []byte) (n int, err error) {
 
 func (s *Screen) WriteNewLine() {
 	// The current line gets a line break
+
 	s.lines[s.cursor.Y].brk = true
 
 	s.cursor.Y++
 	s.cursor.X = 0
 
-	// Allocate the new line
-	if s.cursor.Y > len(s.lines) {
+	// Allocate the new line(s)
+	for s.cursor.Y >= len(s.lines) {
 		s.appendLine()
 	}
 }
@@ -138,7 +139,7 @@ func (s *Screen) VisibleLines() []Line {
 	defer s.mu.Unlock()
 
 	if s.scrollTop >= len(s.lines) {
-		s.scrollTop = len(s.lines) - 1
+		s.scrollTop = len(s.lines)
 	}
 
 	from := s.scrollTop
