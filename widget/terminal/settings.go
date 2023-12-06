@@ -18,7 +18,7 @@ type charSize struct {
 	x, y float64
 }
 
-type consoleSettings struct {
+type ConsoleSettings struct {
 	paddingX, paddingY unit.Dp
 
 	// Tracks the last gtx.Constraint.Max to compare with the next render to check for any differences
@@ -45,7 +45,7 @@ const (
 	LayoutUpdateHeight LayoutUpdateType = 1 << 1
 )
 
-func (s *consoleSettings) update(th *cu.Theme, screen *Screen, gtx layout.Context) layout.Context {
+func (s *ConsoleSettings) update(th *cu.Theme, screen *Screen, gtx layout.Context) layout.Context {
 	cs := s.getCharSize(screen.defaults.Font, gtx.Sp(screen.defaults.FontSize), th.Shaper)
 
 	if s.lastLayoutWidth != gtx.Constraints.Max.X {
@@ -88,7 +88,7 @@ func (s *consoleSettings) update(th *cu.Theme, screen *Screen, gtx layout.Contex
 	return gtx
 }
 
-func (s *consoleSettings) markLayoutUpdate(u LayoutUpdateType) {
+func (s *ConsoleSettings) markLayoutUpdate(u LayoutUpdateType) {
 	if u == LayoutUpdateNone {
 		return
 	}
@@ -111,7 +111,7 @@ type LayoutChangedEvent struct {
 	Type LayoutUpdateType
 }
 
-func (s *consoleSettings) lastLayoutUpdateTimerCallback() {
+func (s *ConsoleSettings) lastLayoutUpdateTimerCallback() {
 	s.lastLayoutChangeLock.Lock()
 	defer s.lastLayoutChangeLock.Unlock()
 
@@ -123,7 +123,7 @@ func (s *consoleSettings) lastLayoutUpdateTimerCallback() {
 	s.lastLayoutChange = LayoutUpdateNone
 }
 
-func (s *consoleSettings) Events() []LayoutChangedEvent {
+func (s *ConsoleSettings) Events() []LayoutChangedEvent {
 	evts := s.lastLayoutChangeEvents[:]
 	s.lastLayoutChangeEvents = nil
 
@@ -135,7 +135,7 @@ type charSizeCacheKey struct {
 	s int
 }
 
-func (s *consoleSettings) getCharSize(f font.Font, sizePx int, shaper *text.Shaper) charSize {
+func (s *ConsoleSettings) getCharSize(f font.Font, sizePx int, shaper *text.Shaper) charSize {
 	cacheKey := charSizeCacheKey{
 		f: f,
 		s: sizePx,
@@ -167,20 +167,20 @@ func (s *consoleSettings) getCharSize(f font.Font, sizePx int, shaper *text.Shap
 	return v
 }
 
-type Option func(settings *consoleSettings)
+type Option func(settings *ConsoleSettings)
 
 func MaxSize(columns, rows int) Option {
-	return func(settings *consoleSettings) {
+	return func(settings *ConsoleSettings) {
 		p := image.Pt(columns, rows)
 		settings.constraints.Max = p
 	}
 }
 
-func NewConsoleSettings(opts ...Option) *consoleSettings {
+func NewConsoleSettings(opts ...Option) *ConsoleSettings {
 	offsetX := unit.Dp(10)
 	offsetY := unit.Dp(6)
 
-	s := &consoleSettings{
+	s := &ConsoleSettings{
 		paddingX:      offsetX,
 		paddingY:      offsetY,
 		charSizeCache: make(map[charSizeCacheKey]charSize),

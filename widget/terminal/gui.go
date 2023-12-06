@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-func Console(th *Theme, screen *Screen, settings *consoleSettings) layout.Widget {
+func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
 		// Figure out character height
 		gtx = settings.update(th, screen, gtx)
