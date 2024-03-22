@@ -131,13 +131,13 @@ func createSpansFrom(screen *Screen) []styledtext.SpanStyle {
 
 			f := screen.defaults.Font
 			if run.style.Bold {
-				f = screen.defaults.Font
+				f = screen.defaults.BoldFont
 			}
 
 			spans = append(spans, styledtext.SpanStyle{
 				Content: run.text,
 				Size:    screen.defaults.FontSize,
-				Color:   run.style.FgColor,
+				Color:   run.style.FgColor(),
 				Font:    f,
 			})
 

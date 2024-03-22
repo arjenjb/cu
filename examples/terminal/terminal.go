@@ -10,12 +10,12 @@ import (
 	"gioui.org/widget"
 	"github.com/arjenjb/cu"
 	"github.com/arjenjb/cu/widget/terminal"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"github.com/lmittmann/tint"
+
 	"io"
+	"log/slog"
 	"math/rand"
 	"os"
-	"time"
 )
 
 type TerminalWindow struct {
@@ -78,7 +78,7 @@ func NewTerminalWindow(size terminal.Point) *TerminalWindow {
 	go func() {
 		_, err := io.Copy(screen, r)
 		if err != nil {
-			log.Error().Msg(err.Error())
+			slog.Error(err.Error())
 		}
 	}()
 
@@ -98,7 +98,13 @@ func main() {
 	os.Stdout = w.Screen
 	os.Stderr = w.Screen
 
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: w.Screen, TimeFormat: time.TimeOnly})
+	slog.SetDefault(slog.New(
+		tint.NewHandler(os.Stderr, &tint.Options{
+			Level:      slog.LevelDebug,
+			TimeFormat: "15:04:05",
+			NoColor:    os.Getenv("NO_COLOR") == "1",
+		}),
+	))
 
 	go func() {
 		err := w.Open()
@@ -109,10 +115,27 @@ func main() {
 		}
 	}()
 
+	RESET := "\u001B[0m"
+	BOLD := "\u001B[1m"
+	FAINT := "\u001B[2m"
+
 	go func() {
-		for i := 0; i < 200; i++ {
-			fmt.Println(randomString(82))
-		}
+		//for i := 0; i < 200; i++ {
+		//	fmt.Println(randomString(82))
+		//}
+
+		fmt.Println("ANSI Test")
+		fmt.Println("=========")
+		slog.Debug("This is not very important")
+		slog.Info("Information message", "key", "value")
+		slog.Warn("It's getting real")
+		slog.Error("Oh no!")
+
+		fmt.Println(BOLD + "This is bold" + RESET)
+		fmt.Println(FAINT + "This is bold" + RESET)
+		fmt.Println("\u001b[38;2;253;182;0mRgb code" + RESET)
+		fmt.Println("\u001b[38;5;63m256 color code" + RESET)
+
 	}()
 
 	print("Starting main")

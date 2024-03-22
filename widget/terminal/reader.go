@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"image/color"
+	"log/slog"
 	"strconv"
 	"strings"
 	"unicode"
@@ -54,13 +56,41 @@ func (t EscapeSequence) applyGraphicRenditionOn(s *Screen) error {
 	}
 
 	if code == 0 {
-		s.ResetColors()
-	} else if code >= 30 && code <= 37 {
-		s.SetForegroundColor(code-30, false)
-	} else if code >= 90 && code <= 97 {
-		s.SetForegroundColor(code-90, true)
-	} else {
+		s.Reset()
+	} else if code == 1 {
 		s.SetBold(true)
+	} else if code == 2 {
+		// Faint not implemented
+		s.SetFaint(true)
+
+	} else if code >= 30 && code <= 37 {
+		s.SetForegroundColorAnsi8(code-30, false)
+	} else if code == 38 {
+		// RGB Code
+		n, err := t.ExpectNumber(1, 0)
+		if err != nil {
+			return err
+		}
+		if n == 2 {
+			// Gather the rest
+			r, _ := t.ExpectNumber(2, 0)
+			g, _ := t.ExpectNumber(3, 0)
+			b, _ := t.ExpectNumber(4, 0)
+			s.SetForegroundColor(color.NRGBA{
+				R: uint8(r),
+				G: uint8(g),
+				B: uint8(b),
+				A: 255,
+			})
+		} else if n == 5 {
+			c, _ := t.ExpectNumber(2, 0)
+			s.SetForegroundColorAnsi256(c)
+		}
+
+	} else if code >= 90 && code <= 97 {
+		s.SetForegroundColorAnsi8(code-90, true)
+	} else {
+		slog.Debug("Unsupported code: %d", code)
 	}
 
 	return nil

@@ -75,14 +75,16 @@ func (s *Screen) WriteString(s2 string) error {
 }
 
 // The following are primitives that are used by the parser
-
-func (s *Screen) SetForegroundColor(c int, b bool) {
-	s.style.SetForegroundAnsi(c, b)
+func (s *Screen) SetForegroundColorAnsi8(c int, b bool) {
+	s.style.SetForegroundAnsi8(c, b)
 }
 
-func (s *Screen) ResetColors() {
-	s.style.SetForegroundColor(s.defaults.FgColor)
-	s.style.SetBackgroundColor(s.defaults.BgColor)
+func (s *Screen) SetForegroundColor(c color.NRGBA) {
+	s.style.SetForegroundColor(c)
+}
+
+func (s *Screen) Reset() {
+	s.style.Reset(s.defaults.FgColor, s.defaults.BgColor)
 }
 
 func (s *Screen) SetBold(b bool) {
@@ -222,6 +224,14 @@ func (s *Screen) updateHeight(height int) {
 	s.Size.Y = height
 }
 
+func (s *Screen) SetForegroundColorAnsi256(c int) {
+	s.style.SetForegroundAnsi256(c)
+}
+
+func (s *Screen) SetFaint(b bool) {
+	s.style.SetFaint(true)
+}
+
 func NewScreen(size Point, updatedChannel chan interface{}) *Screen {
 	// background color
 	defaults := Defaults{
@@ -240,7 +250,7 @@ func NewScreen(size Point, updatedChannel chan interface{}) *Screen {
 		top:            0,
 		defaults:       defaults,
 		style: Style{
-			FgColor: defaults.FgColor,
+			fgColor: defaults.FgColor,
 			BgColor: defaults.BgColor,
 			Bold:    false,
 		},
