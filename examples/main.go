@@ -7,7 +7,7 @@ import (
 	"gioui.org/widget"
 	"github.com/arjenjb/cu"
 	widget2 "github.com/arjenjb/cu/widget"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"time"
 )
 
@@ -15,11 +15,7 @@ var checkable widget.Bool
 
 func checkboxExample(gtx layout.Context, th *cu.Theme) layout.Widget {
 	if checkable.Update(gtx) {
-		if checkable.Value {
-			log.Info().Str("checked", "yes").Msg("Checkbox toggled")
-		} else {
-			log.Info().Str("checked", "no").Msg("Checkbox toggled")
-		}
+		slog.Info("Checkbox toggled", "checked", checkable.Value)
 	}
 
 	return th.FlexRow(cu.Gap(cu.XS)).
@@ -33,7 +29,7 @@ func main() {
 
 	var progress float32 = 0.0
 	var w app.Window
-	
+
 	// Continuously update the progress bar
 	go func() {
 		for {
