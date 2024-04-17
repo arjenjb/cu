@@ -93,6 +93,13 @@ func (f Flex) RigidIf(condition bool, w layout.Widget) Flex {
 	return f
 }
 
+func (f Flex) FlexedIf(condition bool, weight float32, w layout.Widget) Flex {
+	if condition {
+		return f.Flexed(weight, w)
+	}
+	return f
+}
+
 type CuFlexOption func(w *Flex, t Theme)
 
 func Spacing(s layout.Spacing) func(w *Flex, t Theme) {
