@@ -5,7 +5,6 @@ import (
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
-	"gioui.org/unit"
 	widget2 "gioui.org/widget"
 	"github.com/arjenjb/cu"
 	"github.com/arjenjb/cu/widget"
@@ -36,29 +35,29 @@ func (a AlertDialog) Layout(gtx layout.Context) layout.Dimensions {
 }
 
 func (a AlertDialog) Show() {
-	w := app.NewWindow(func(metric unit.Metric, config *app.Config) {
-		config.Title = a.Title
-	}, app.Size(400, 140))
+	w := app.Window{}
+	w.Option(
+		app.Title(a.Title),
+		app.Size(400, 140),
+	)
 
 	var ops op.Ops
 
 	var done = false
 	for !done {
-		select {
-		case evt := <-w.Events():
-			switch e := evt.(type) {
-			case system.DestroyEvent:
-				done = true
+		switch e := w.Event().(type) {
+		case app.DestroyEvent:
+			done = true
 
-			case system.FrameEvent:
-				if a.button.Clicked() {
-					w.Perform(system.ActionClose)
-				}
+		case app.FrameEvent:
+			gtx := app.NewContext(&ops, e)
 
-				gtx := layout.NewContext(&ops, e)
-				a.Layout(gtx)
-				e.Frame(&ops)
+			if a.button.Clicked(gtx) {
+				w.Perform(system.ActionClose)
 			}
+
+			a.Layout(gtx)
+			e.Frame(&ops)
 		}
 	}
 }

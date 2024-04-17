@@ -52,7 +52,7 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 				rr := gtx.Dp(b.CornerRadius)
 
 				switch {
-				case gtx.Queue == nil || b.Disabled:
+				case b.Disabled:
 					background = colorDisabled
 
 				case b.Button.Pressed():

@@ -2,10 +2,8 @@ package main
 
 import (
 	"gioui.org/app"
-	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
-	"gioui.org/unit"
 	"gioui.org/widget"
 	"github.com/arjenjb/cu"
 	widget2 "github.com/arjenjb/cu/widget"
@@ -15,8 +13,8 @@ import (
 
 var checkable widget.Bool
 
-func checkboxExample(th *cu.Theme) layout.Widget {
-	if checkable.Changed() {
+func checkboxExample(gtx layout.Context, th *cu.Theme) layout.Widget {
+	if checkable.Update(gtx) {
 		if checkable.Value {
 			log.Info().Str("checked", "yes").Msg("Checkbox toggled")
 		} else {
@@ -30,13 +28,12 @@ func checkboxExample(th *cu.Theme) layout.Widget {
 }
 
 func main() {
-	w := app.NewWindow(app.Size(unit.Dp(670), unit.Dp(360)))
-	th := cu.NewDefaultTheme()
 
 	var ops op.Ops
 
 	var progress float32 = 0.0
-
+	var w app.Window
+	
 	// Continuously update the progress bar
 	go func() {
 		for {
@@ -49,33 +46,38 @@ func main() {
 	}()
 
 	go func() {
+
+		w.Option(
+			app.Size(670, 360),
+		)
+
+		th := cu.NewDefaultTheme()
+
 		for {
-			select {
-			case evt := <-w.Events():
-				switch e := evt.(type) {
-				case system.DestroyEvent:
-					return
+			switch e := w.Event().(type) {
+			case app.DestroyEvent:
+				return
 
-				case system.FrameEvent:
-					gtx := layout.NewContext(&ops, e)
+			case app.FrameEvent:
+				gtx := app.NewContext(&ops, e)
 
-					th.Background(gtx)
+				th.Background(gtx)
 
-					th.M(cu.M, th.FlexColumn(cu.Gap(cu.M)).
-						Rigid(buttonExample(th)).
-						Rigid(th.Hr()).
-						Rigid(checkboxExample(th)).
-						Rigid(th.Hr()).
-						Rigid(spinnerExample(th)).
-						Rigid(th.Hr()).
-						Rigid(progressExample(th, progress)).
-						Rigid(th.Hr()).
-						Rigid(dialogExample(th)).
-						Layout)(gtx)
+				th.M(cu.M, th.FlexColumn(cu.Gap(cu.M)).
+					Rigid(buttonExample(th)).
+					Rigid(th.Hr()).
+					Rigid(checkboxExample(gtx, th)).
+					Rigid(th.Hr()).
+					Rigid(spinnerExample(th)).
+					Rigid(th.Hr()).
+					Rigid(progressExample(th, progress)).
+					Rigid(th.Hr()).
+					Rigid(dialogExample(gtx, th)).
+					Layout)(gtx)
 
-					e.Frame(gtx.Ops)
-				}
+				e.Frame(gtx.Ops)
 			}
+
 		}
 	}()
 

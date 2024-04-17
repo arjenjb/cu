@@ -75,9 +75,7 @@ func (s Spinner) Layout(gtx layout.Context) layout.Dimensions {
 		}, (math.Pi/180)*-45)).Push(gtx.Ops).Pop()
 	}
 
-	op.InvalidateOp{
-		At: now.Add(50 * time.Millisecond),
-	}.Add(gtx.Ops)
+	//gtx.Execute(op.InvalidateCmd{At: now.Add(50 * time.Millisecond)})
 
 	return layout.Dimensions{
 		Size:     size,

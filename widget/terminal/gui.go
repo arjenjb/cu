@@ -2,6 +2,7 @@ package terminal
 
 import (
 	_ "embed"
+	"gioui.org/io/event"
 	"gioui.org/io/pointer"
 	"gioui.org/layout"
 	"gioui.org/op/clip"
@@ -25,8 +26,15 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 			B: 0,
 			A: 128,
 		}, func(gtx layout.Context) layout.Dimensions {
-			for _, each := range gtx.Queue.Events(settings.scrollTag) {
-				switch evt := each.(type) {
+			evt, got := gtx.Source.Event(pointer.Filter{
+				Target: settings.scrollTag,
+				Kinds:  pointer.Scroll,
+				ScrollBounds: image.Rectangle{
+					Min: image.Point{Y: -3},
+					Max: image.Point{Y: 3}},
+			})
+			if got {
+				switch evt := evt.(type) {
 				case pointer.Event:
 					screen.scrollTop = min(
 						max(
@@ -42,13 +50,7 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 			paint.Fill(gtx.Ops, screen.defaults.BgColor)
 
 			// Declare the tag
-			pointer.InputOp{
-				Tag:   settings.scrollTag,
-				Types: pointer.Scroll,
-				ScrollBounds: image.Rectangle{
-					Min: image.Point{Y: -3},
-					Max: image.Point{Y: 3}},
-			}.Add(gtx.Ops)
+			event.Op(gtx.Ops, settings.scrollTag)
 
 			return layout.Stack{}.Layout(gtx,
 				layout.Stacked(func(gtx layout.Context) layout.Dimensions {

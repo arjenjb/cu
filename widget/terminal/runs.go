@@ -54,6 +54,9 @@ func (r Run) Split(maxLength int) (Run, Run, bool) {
 		return r, Run{}, false
 	} else {
 		l := maxLength - r.start
+		if l < 0 {
+			panic("should not occur")
+		}
 		head := Run{
 			start: r.start,
 			text:  r.text[0:l],

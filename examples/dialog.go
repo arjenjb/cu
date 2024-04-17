@@ -12,9 +12,9 @@ import (
 var btnAlertDialog = &widget2.Clickable{}
 var btnConfirmDialog = &widget2.Clickable{}
 
-func dialogExample(th *cu.Theme) func(gtx layout.Context) layout.Dimensions {
+func dialogExample(gtx layout.Context, th *cu.Theme) func(gtx layout.Context) layout.Dimensions {
 
-	if btnAlertDialog.Clicked() {
+	if btnAlertDialog.Clicked(gtx) {
 		go func() {
 			d := dialog.NewAlertDialog(th)
 			d.Title = "Alert!!!"
@@ -24,7 +24,7 @@ func dialogExample(th *cu.Theme) func(gtx layout.Context) layout.Dimensions {
 		}()
 	}
 
-	if btnConfirmDialog.Clicked() {
+	if btnConfirmDialog.Clicked(gtx) {
 		go func() {
 			d := dialog.NewConfirmDialog(th)
 			d.Title = "Are you sure"

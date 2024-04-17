@@ -49,7 +49,10 @@ func (s *Screen) Write(p []byte) (n int, err error) {
 	// Notify the channel that the screen has been updated
 	if s.updatedChannel != nil {
 		// async notify
-		go func() { s.updatedChannel <- struct{}{} }()
+		select {
+		case s.updatedChannel <- struct{}{}:
+		default:
+		}
 	}
 
 	return len(p), nil

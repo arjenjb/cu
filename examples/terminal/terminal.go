@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gioui.org/app"
 	"gioui.org/io/system"
-	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/unit"
 	"gioui.org/widget"
@@ -31,12 +30,36 @@ func (l TerminalWindow) Close() {
 
 func (l TerminalWindow) Open() error {
 	th := cu.NewDefaultTheme()
-	w := app.NewWindow(app.Size(unit.Dp(670), unit.Dp(524)))
+	w := &app.Window{}
 
+	var guiReady = make(chan any)
 	var ops op.Ops
 
 	button := new(widget.Clickable)
 	settings := terminal.NewConsoleSettings(terminal.MaxSize(100, 30))
+
+	go func() {
+		w.Option(app.Size(unit.Dp(670), unit.Dp(524)))
+		guiReady <- struct{}{}
+
+		for {
+			switch e := w.Event().(type) {
+			case app.DestroyEvent:
+				return
+
+			case app.FrameEvent:
+				gtx := app.NewContext(&ops, e)
+				if button.Clicked(gtx) {
+					w.Perform(system.ActionClose)
+				}
+				terminal.Console(th, l.screen, settings)(gtx)
+				e.Frame(gtx.Ops)
+			}
+		}
+	}()
+
+	// Wait for the GUI to be ready
+	<-guiReady
 
 	for {
 		select {
@@ -45,26 +68,6 @@ func (l TerminalWindow) Open() error {
 
 		case <-l.updatedChannel:
 			w.Invalidate()
-
-		case evt := <-w.Events():
-			switch e := evt.(type) {
-			case system.StageEvent:
-				//alwaysOnTop()
-
-			case system.DestroyEvent:
-				return nil
-
-			case system.FrameEvent:
-				gtx := layout.NewContext(&ops, e)
-
-				if button.Clicked() {
-					w.Perform(system.ActionClose)
-				}
-
-				terminal.Console(th, l.screen, settings)(gtx)
-
-				e.Frame(gtx.Ops)
-			}
 		}
 	}
 }
@@ -136,6 +139,8 @@ func main() {
 		fmt.Println("\u001b[38;2;253;182;0mRgb code" + RESET)
 		fmt.Println("\u001b[38;5;63m256 color code" + RESET)
 
+		fmt.Println("")
+		fmt.Println(randomString(200))
 	}()
 
 	print("Starting main")
