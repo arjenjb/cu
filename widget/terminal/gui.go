@@ -17,6 +17,7 @@ import (
 
 func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
+
 		// Figure out character height
 		gtx = settings.update(th, screen, gtx)
 
@@ -29,9 +30,10 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 			evt, got := gtx.Source.Event(pointer.Filter{
 				Target: settings.scrollTag,
 				Kinds:  pointer.Scroll,
-				ScrollBounds: image.Rectangle{
-					Min: image.Point{Y: -3},
-					Max: image.Point{Y: 3}},
+				ScrollY: pointer.ScrollRange{
+					Min: -3,
+					Max: 3,
+				},
 			})
 			if got {
 				switch evt := evt.(type) {
@@ -71,7 +73,7 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 					// scrollbar area
 					offset := gtx.Dp(8)
 					area := image.Rectangle{
-						Min: image.Point{gtx.Constraints.Max.X - int(float32(offset)*1.7), offset},
+						Min: image.Point{gtx.Constraints.Max.X - int(float32(offset)*1.7), offset}, // width of the scrollbar
 						Max: image.Point{gtx.Constraints.Max.X - offset, gtx.Constraints.Max.Y - offset},
 					}
 
