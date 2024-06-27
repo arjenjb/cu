@@ -46,21 +46,13 @@ func (s *Screen) Write(p []byte) (n int, err error) {
 	defer s.mu.Unlock()
 	r.Parse()
 
-	// Notify the channel that the screen has been updated
-	if s.updatedChannel != nil {
-		// async notify
-		select {
-		case s.updatedChannel <- struct{}{}:
-		default:
-		}
-	}
+	s.notifyUpdated()
 
 	return len(p), nil
 }
 
 func (s *Screen) WriteNewLine() {
 	// The current line gets a line break
-
 	s.lines[s.cursor.Y].brk = true
 
 	s.cursor.Y++
@@ -154,13 +146,15 @@ func (s *Screen) VisibleLines() []Line {
 }
 
 func (s *Screen) appendLine() {
+	// Create a new line
 	s.lines = append(s.lines, Line{})
-	dy := max((len(s.lines)-s.top)-s.Size.Y, 0)
 
-	if s.scrollTop == s.top {
-		s.scrollTop += dy
+	// And update the top reference
+	follow := s.scrollTop == s.top
+	s.top = max(len(s.lines)-s.Size.Y, 0)
+	if follow {
+		s.scrollTop = s.top
 	}
-	s.top += dy
 }
 
 func (s *Screen) updateWidth(width int) {
@@ -224,7 +218,18 @@ func (s *Screen) VirtualLines() []VirtualLine {
 }
 
 func (s *Screen) updateHeight(height int) {
+	if height == s.Size.Y {
+		return
+	}
+
+	// rewrite top and scrollOffset
+	delta := s.Size.Y - height
+	s.top += delta
+	s.scrollTop = max(s.scrollTop+delta, 0)
+	
 	s.Size.Y = height
+
+	s.notifyUpdated()
 }
 
 func (s *Screen) SetForegroundColorAnsi256(c int) {
@@ -233,6 +238,17 @@ func (s *Screen) SetForegroundColorAnsi256(c int) {
 
 func (s *Screen) SetFaint(b bool) {
 	s.style.SetFaint(true)
+}
+
+func (s *Screen) notifyUpdated() {
+	// Notify the channel that the screen has been updated
+	if s.updatedChannel != nil {
+		// async notify
+		select {
+		case s.updatedChannel <- struct{}{}:
+		default:
+		}
+	}
 }
 
 func NewScreen(size Point, updatedChannel chan interface{}) *Screen {
