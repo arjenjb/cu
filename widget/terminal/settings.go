@@ -119,8 +119,8 @@ func (s *ConsoleSettings) lastLayoutUpdateTimerCallback() {
 		Type: s.lastLayoutChange,
 	})
 
-	s.lastLayoutChangeTimerRunning = false
 	s.lastLayoutChange = LayoutUpdateNone
+	s.lastLayoutChangeTimerRunning = false
 }
 
 func (s *ConsoleSettings) Events() []LayoutChangedEvent {
