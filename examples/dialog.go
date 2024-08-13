@@ -7,13 +7,14 @@ import (
 	"github.com/arjenjb/cu"
 	"github.com/arjenjb/cu/dialog"
 	"github.com/arjenjb/cu/widget"
+	"log/slog"
 )
 
 var btnAlertDialog = &widget2.Clickable{}
 var btnConfirmDialog = &widget2.Clickable{}
+var btnInputDialog = &widget2.Clickable{}
 
 func dialogExample(gtx layout.Context, th *cu.Theme) func(gtx layout.Context) layout.Dimensions {
-
 	if btnAlertDialog.Clicked(gtx) {
 		go func() {
 			d := dialog.NewAlertDialog(th)
@@ -38,8 +39,24 @@ func dialogExample(gtx layout.Context, th *cu.Theme) func(gtx layout.Context) la
 		}()
 	}
 
+	if btnInputDialog.Clicked(gtx) {
+		go func() {
+			d := dialog.NewInputDialog(th)
+			d.Title = "Authenticate"
+			d.BigMessage = "Root privileges are required"
+			d.NormalMessage = "Enter your password to perform administrative tasks"
+			d.Hint = "Enter password"
+			d.Editor.Mask = '•'
+			d.AcceptLabel = "Authenticate"
+
+			if ok, password := d.Show(); ok {
+				slog.Info("User accepted", "value", password)
+			}
+		}()
+	}
 	return th.FlexRow(cu.Gap(cu.XS)).
 		Rigid(widget.Button(th, btnAlertDialog, "Alert dialog").Layout).
 		Rigid(widget.Button(th, btnConfirmDialog, "Confirm dialog").Layout).
+		Rigid(widget.Button(th, btnInputDialog, "Input dialog").Layout).
 		Layout
 }
