@@ -33,10 +33,7 @@ type ButtonWidget struct {
 	options   buttonOptions
 }
 
-var tag struct{}
-
 func (b *ButtonWidget) Layout(gtx layout.Context) layout.Dimensions {
-
 	fontSize := b.theme.TextSize
 	if b.options.big {
 		fontSize = 15
