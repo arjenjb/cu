@@ -21,7 +21,7 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 		// Figure out character height
 		gtx = settings.update(th, screen, gtx)
 
-		return bordered(gtx, 0, color.NRGBA{
+		return bordered(gtx, 1, color.NRGBA{
 			R: 0,
 			G: 0,
 			B: 0,

@@ -181,10 +181,8 @@ func MaxSize(columns, rows int) Option {
 }
 
 func NewConsoleSettings(opts ...Option) *ConsoleSettings {
-	//offsetX := unit.Dp(10)
-	//offsetY := unit.Dp(6)
-	offsetX := unit.Dp(0)
-	offsetY := unit.Dp(0)
+	offsetX := unit.Dp(10)
+	offsetY := unit.Dp(6)
 
 	s := &ConsoleSettings{
 		paddingX:      offsetX,
