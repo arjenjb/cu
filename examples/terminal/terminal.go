@@ -65,7 +65,6 @@ func (l TerminalWindow) Open() error {
 		select {
 		case <-l.quitChannel:
 			w.Perform(system.ActionClose)
-
 		case <-l.updatedChannel:
 			w.Invalidate()
 		}
@@ -127,6 +126,9 @@ func main() {
 		//	fmt.Println(randomString(82))
 		//}
 
+		for i := 0; i < 10; i++ {
+			fmt.Printf("%d: %c\n", i+1, 'a'+i)
+		}
 		fmt.Println("ANSI Test")
 		fmt.Println("=========")
 		slog.Debug("This is not very important")
@@ -140,6 +142,9 @@ func main() {
 		fmt.Println("\u001b[38;5;63m256 color code" + RESET)
 
 		fmt.Println("")
+		fmt.Println("")
+		fmt.Println("a")
+		fmt.Println(randomString(200))
 		fmt.Println(randomString(200))
 	}()
 

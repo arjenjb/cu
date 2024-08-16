@@ -9,7 +9,6 @@ import (
 	"github.com/arjenjb/cu"
 	"golang.org/x/image/math/fixed"
 	"image"
-	"strings"
 	"sync"
 	"time"
 )
@@ -46,7 +45,11 @@ const (
 )
 
 func (s *ConsoleSettings) update(th *cu.Theme, screen *Screen, gtx layout.Context) layout.Context {
-	cs := s.getCharSize(screen.defaults.Font, gtx.Sp(screen.defaults.FontSize), th.Shaper)
+	cs := s.getCharSize(
+		screen.defaults.Font,
+		gtx.Sp(screen.defaults.FontSize),
+		th.Shaper,
+	)
 
 	if s.lastLayoutWidth != gtx.Constraints.Max.X {
 		s.lastLayoutWidth = gtx.Constraints.Max.X
@@ -150,14 +153,15 @@ func (s *ConsoleSettings) getCharSize(f font.Font, sizePx int, shaper *text.Shap
 		PxPerEm: fixed.I(sizePx),
 	}
 
-	shaper.Layout(params, strings.NewReader("A"))
+	shaper.LayoutString(params, "W")
 	g, _ := shaper.NextGlyph()
-
 	var charWidth = g.Advance
-	var charHeight = int(g.Y) + g.Descent.Ceil()
-
 	charWidthf := float64((charWidth.Mul(fixed.I(1000))).Ceil()) / 1000.0
-	charHeightf := float64(charHeight)
+
+	// This is the way the styledtext widget determines the line height
+	shaper.LayoutString(params, "")
+	g, _ = shaper.NextGlyph()
+	charHeightf := float64(g.Ascent.Ceil() + g.Descent.Ceil())
 
 	v := charSize{
 		x: charWidthf,
@@ -177,8 +181,10 @@ func MaxSize(columns, rows int) Option {
 }
 
 func NewConsoleSettings(opts ...Option) *ConsoleSettings {
-	offsetX := unit.Dp(10)
-	offsetY := unit.Dp(6)
+	//offsetX := unit.Dp(10)
+	//offsetY := unit.Dp(6)
+	offsetX := unit.Dp(0)
+	offsetY := unit.Dp(0)
 
 	s := &ConsoleSettings{
 		paddingX:      offsetX,

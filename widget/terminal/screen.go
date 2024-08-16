@@ -20,9 +20,6 @@ type Screen struct {
 	style    Style
 	defaults Defaults
 
-	// Tracks the line that is currently at the top of the screen, independent of scrolling
-	top int
-
 	// This follows the top variable, but can be overridden by scrolling the window
 	scrollTop int
 
@@ -52,7 +49,11 @@ func (s *Screen) Write(p []byte) (n int, err error) {
 }
 
 func (s *Screen) WriteNewLine() {
-	// The current line gets a line break
+	// The current line gets a line break, or allocate one if there is none
+	if s.cursor.Y == len(s.lines) {
+		s.lines = append(s.lines, Line{})
+	}
+
 	s.lines[s.cursor.Y].brk = true
 
 	s.cursor.Y++
@@ -146,17 +147,18 @@ func (s *Screen) VisibleLines() []Line {
 }
 
 func (s *Screen) appendLine() {
+	// And update the top reference
+	follow := s.scrollTop == s.scrollMax()
+
 	// Create a new line
 	s.lines = append(s.lines, Line{})
 
-	// And update the top reference
-	follow := s.scrollTop == s.top
-	s.top = max(len(s.lines)-s.Size.Y, 0)
 	if follow {
-		s.scrollTop = s.top
+		s.scrollTop = s.scrollMax()
 	}
 }
 
+// updateWidth updates the with of the terminal and recalculates the lines in the terminal
 func (s *Screen) updateWidth(width int) {
 	// constrain the width
 	if width == s.Size.X {
@@ -167,16 +169,11 @@ func (s *Screen) updateWidth(width int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	var topTranslated, scrollTopTranslated bool
+	var scrollTopTranslated bool
 	var newLineNumber int
 
-	for _, l := range s.VirtualLines() {
+	for _, l := range s.virtualLines() {
 		// rewrite top, and scrollTop if needed
-		if !topTranslated && s.top <= l.endLine {
-			topTranslated = true
-			s.top = newLineNumber
-		}
-
 		if !scrollTopTranslated && s.scrollTop <= l.endLine {
 			scrollTopTranslated = true
 			s.scrollTop = newLineNumber
@@ -192,7 +189,8 @@ func (s *Screen) updateWidth(width int) {
 	s.lines = displayLines
 }
 
-func (s *Screen) VirtualLines() []VirtualLine {
+// Reconstructs the lines as originally emitted to the terminal independent of terminal width
+func (s *Screen) virtualLines() []VirtualLine {
 	var result []VirtualLine
 
 	for i := 0; i < len(s.lines); i++ {
@@ -217,17 +215,20 @@ func (s *Screen) VirtualLines() []VirtualLine {
 	return result
 }
 
-func (s *Screen) updateHeight(height int) {
-	if height == s.Size.Y {
+func (s *Screen) updateHeight(newHeight int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	// Is it the same height?
+	if newHeight == s.Size.Y {
 		return
 	}
 
-	// rewrite top and scrollOffset
-	delta := s.Size.Y - height
-	s.top += delta
+	// rewrite scrollOffset
+	delta := min(s.Size.Y, len(s.lines)) - newHeight
+	//s.top += delta
 	s.scrollTop = max(s.scrollTop+delta, 0)
-	
-	s.Size.Y = height
+	s.Size.Y = newHeight
 
 	s.notifyUpdated()
 }
@@ -251,6 +252,10 @@ func (s *Screen) notifyUpdated() {
 	}
 }
 
+func (s *Screen) scrollMax() int {
+	return max(len(s.lines)-s.Size.Y, 0)
+}
+
 func NewScreen(size Point, updatedChannel chan interface{}) *Screen {
 	// background color
 	defaults := Defaults{
@@ -266,7 +271,6 @@ func NewScreen(size Point, updatedChannel chan interface{}) *Screen {
 		cursor:         &Point{},
 		Size:           size,
 		lines:          nil,
-		top:            0,
 		defaults:       defaults,
 		style: Style{
 			fgColor: defaults.FgColor,

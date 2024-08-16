@@ -3,11 +3,11 @@ package terminal
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func Test_LineSplit(t *testing.T) {
-
 	l := VirtualLine{}
 	l.Write("123451234512345_", 5, Style{})
 
@@ -116,11 +116,11 @@ func TestVirtualLines(t *testing.T) {
 
 	assert.Len(t, s.Lines(), 6)
 
-	l := s.VirtualLines()
+	l := s.virtualLines()
 	assert.Len(t, l, 2)
 }
 
-func TestResizeBigger(t *testing.T) {
+func TestResizeGreaterWidth(t *testing.T) {
 	s := NewScreen(Point{2, 10}, nil)
 	s.WriteString("abc")
 	s.WriteNewLine()
@@ -130,6 +130,39 @@ func TestResizeBigger(t *testing.T) {
 
 	s.updateWidth(10)
 	assert.Len(t, s.Lines(), 2)
+}
+
+func TestResizeHeight(t *testing.T) {
+	s := NewScreen(Point{3, 3}, nil)
+	s.WriteString("abcdef")
+	s.WriteNewLine()
+	s.WriteString("b")
+	s.WriteNewLine()
+	s.WriteString("c")
+	s.WriteNewLine()
+	s.WriteString("d")
+
+	require.Len(t, s.Lines(), 5)
+	require.Equal(t, s.scrollTop, 2)
+
+	s.scrollTop = 1
+	s.updateHeight(2)
+
+	require.Equal(t, s.scrollTop, 2)
+}
+
+func TestResizeBehaviorHeight(t *testing.T) {
+	s := NewScreen(Point{1, 1}, nil)
+	s.WriteString("a")
+	s.WriteNewLine()
+	s.WriteString("b")
+
+	require.Len(t, s.Lines(), 2)
+	require.Equal(t, 1, s.scrollTop)
+
+	s.updateHeight(2)
+	require.Equal(t, 0, s.scrollTop)
+
 }
 
 //func TestProgressBar(t *testing.T) {

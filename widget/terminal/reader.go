@@ -90,7 +90,7 @@ func (t EscapeSequence) applyGraphicRenditionOn(s *Screen) error {
 	} else if code >= 90 && code <= 97 {
 		s.SetForegroundColorAnsi8(code-90, true)
 	} else {
-		slog.Debug("Unsupported code: %d", code)
+		slog.Debug("Unsupported code", "code", code)
 	}
 
 	return nil

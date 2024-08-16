@@ -21,7 +21,7 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 		// Figure out character height
 		gtx = settings.update(th, screen, gtx)
 
-		return bordered(gtx, 1, color.NRGBA{
+		return bordered(gtx, 0, color.NRGBA{
 			R: 0,
 			G: 0,
 			B: 0,
@@ -43,7 +43,7 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 							screen.scrollTop+int(evt.Scroll.Y),
 							0,
 						),
-						screen.top,
+						screen.scrollMax(),
 					)
 				}
 			}
@@ -77,13 +77,13 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 						Max: image.Point{gtx.Constraints.Max.X - offset, gtx.Constraints.Max.Y - offset},
 					}
 
-					l := float32(screen.Size.Y) / float32(screen.top+screen.Size.Y)
+					l := float32(screen.Size.Y) / float32(len(screen.Lines()))
 
 					if l < 1.0 {
 						total := float32(area.Dy())
 						height := total * l
 
-						offsetTop := (total - height) * float32(screen.scrollTop) / float32(screen.top)
+						offsetTop := (total - height) * (float32(screen.scrollTop) / float32(screen.scrollMax()))
 
 						bar := area
 						bar.Max.Y = area.Min.Y + int(height)
@@ -130,7 +130,11 @@ func createSpansFrom(screen *Screen) []styledtext.SpanStyle {
 		x := 0
 		for _, run := range line.runs {
 			if run.start > x {
-				spans = append(spans, styledtext.SpanStyle{Content: strings.Repeat(" ", run.start-x)})
+				spans = append(spans, styledtext.SpanStyle{
+					Content: strings.Repeat(" ", run.start-x),
+					Size:    screen.defaults.FontSize,
+					Font:    screen.defaults.Font,
+				})
 			}
 
 			f := screen.defaults.Font
@@ -147,7 +151,12 @@ func createSpansFrom(screen *Screen) []styledtext.SpanStyle {
 
 			x = run.end()
 		}
-		spans = append(spans, styledtext.SpanStyle{Content: "\n"})
+		spans = append(spans, styledtext.SpanStyle{Content: "\n",
+			Size:  screen.defaults.FontSize,
+			Font:  screen.defaults.Font,
+			Color: screen.defaults.FgColor,
+		})
+
 	}
 
 	return spans
