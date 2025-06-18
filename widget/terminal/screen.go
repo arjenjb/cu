@@ -11,6 +11,10 @@ type Point struct {
 	X, Y int
 }
 
+func Pt(x, y int) Point {
+	return Point{X: x, Y: y}
+}
+
 type Screen struct {
 	cursor *Point
 	Size   Point
