@@ -11,8 +11,9 @@ import (
 type TextInputWidget struct {
 	Editor *widget.Editor
 	Hint   string
-	theme  *cu.Theme
-	width  unit.Dp
+	theme  cu.Theme
+	Width  unit.Dp
+	Height unit.Dp
 }
 
 func (t TextInputWidget) Layout(gtx layout.Context) layout.Dimensions {
@@ -24,15 +25,17 @@ func (t TextInputWidget) Layout(gtx layout.Context) layout.Dimensions {
 	return InputStyle{
 		CornerRadius: 4,
 		Editor:       t.Editor,
-		Width:        t.width,
+		Width:        t.Width,
+		Height:       t.Height,
 	}.Layout(gtx, material.Editor(mt, t.Editor, t.Hint).Layout)
 }
 
-func TextInput(th *cu.Theme, editor *widget.Editor, hint string, width unit.Dp) TextInputWidget {
+func TextInput(th cu.Theme, editor *widget.Editor, hint string, width unit.Dp, height unit.Dp) TextInputWidget {
 	return TextInputWidget{
 		theme:  th,
 		Editor: editor,
 		Hint:   hint,
-		width:  width,
+		Width:  width,
+		Height: height,
 	}
 }

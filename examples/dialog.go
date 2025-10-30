@@ -14,7 +14,7 @@ var btnAlertDialog = &widget2.Clickable{}
 var btnConfirmDialog = &widget2.Clickable{}
 var btnInputDialog = &widget2.Clickable{}
 
-func dialogExample(gtx layout.Context, th *cu.Theme) func(gtx layout.Context) layout.Dimensions {
+func dialogExample(gtx layout.Context, th cu.Theme) func(gtx layout.Context) layout.Dimensions {
 	if btnAlertDialog.Clicked(gtx) {
 		go func() {
 			d := dialog.NewAlertDialog(th)

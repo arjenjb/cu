@@ -12,7 +12,7 @@ import (
 )
 
 type inputDialog struct {
-	Theme *cu.Theme
+	Theme cu.Theme
 	// Title is shown in the titlebar, if left empty it will default to Message
 	Title string
 	// BigMessage is shown in H2 style at the top of window
@@ -45,7 +45,7 @@ func (a inputDialog) Layout(gtx layout.Context) layout.Dimensions {
 				th.FlexRow(cu.Align(layout.Middle)).
 					Flexed(1, cu.HSpacer(0)).
 					Rigid(
-						widget.TextInput(th, a.Editor, a.Hint, 250).Layout,
+						widget.TextInput(th, a.Editor, a.Hint, 250, 0).Layout,
 					).
 					Flexed(1, cu.HSpacer(0)).
 					Layout,
@@ -100,7 +100,7 @@ func (a inputDialog) Show() (bool, string) {
 	return a.Accepted, a.Editor.Text()
 }
 
-func NewInputDialog(th *cu.Theme) *inputDialog {
+func NewInputDialog(th cu.Theme) *inputDialog {
 	editor := new(widget2.Editor)
 	editor.SingleLine = true
 

@@ -1,6 +1,10 @@
 package terminal
 
 import (
+	"image"
+	"sync"
+	"time"
+
 	"gioui.org/font"
 	"gioui.org/io/event"
 	"gioui.org/layout"
@@ -8,9 +12,6 @@ import (
 	"gioui.org/unit"
 	"github.com/arjenjb/cu"
 	"golang.org/x/image/math/fixed"
-	"image"
-	"sync"
-	"time"
 )
 
 type charSize struct {
@@ -44,7 +45,7 @@ const (
 	LayoutUpdateHeight LayoutUpdateType = 1 << 1
 )
 
-func (s *ConsoleSettings) update(th *cu.Theme, screen *Screen, gtx layout.Context) layout.Context {
+func (s *ConsoleSettings) update(th cu.Theme, screen *Screen, gtx layout.Context) layout.Context {
 	cs := s.getCharSize(
 		screen.defaults.Font,
 		gtx.Sp(screen.defaults.FontSize),

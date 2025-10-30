@@ -2,6 +2,10 @@ package terminal
 
 import (
 	_ "embed"
+	"image"
+	"image/color"
+	"strings"
+
 	"gioui.org/io/event"
 	"gioui.org/io/pointer"
 	"gioui.org/layout"
@@ -10,12 +14,9 @@ import (
 	"gioui.org/unit"
 	"gioui.org/x/styledtext"
 	. "github.com/arjenjb/cu"
-	"image"
-	"image/color"
-	"strings"
 )
 
-func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget {
+func Console(th Theme, screen *Screen, settings *ConsoleSettings) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
 
 		// Figure out character height
@@ -48,6 +49,7 @@ func Console(th *Theme, screen *Screen, settings *ConsoleSettings) layout.Widget
 				}
 			}
 
+			// Fill the background
 			defer clip.Rect{Max: gtx.Constraints.Max}.Push(gtx.Ops).Pop()
 			paint.Fill(gtx.Ops, screen.defaults.BgColor)
 

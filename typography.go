@@ -1,6 +1,8 @@
 package cu
 
 import (
+	"image/color"
+
 	"gioui.org/font"
 	"gioui.org/layout"
 	"gioui.org/op"
@@ -8,7 +10,6 @@ import (
 	"gioui.org/text"
 	"gioui.org/unit"
 	"gioui.org/widget"
-	"image/color"
 )
 
 type D = layout.Dimensions
@@ -30,11 +31,12 @@ func textWidget(t Theme, label string, size unit.Sp, lineHeight unit.Sp, weight 
 }
 
 type TextOptions struct {
-	Size     unit.Sp
-	Bold     bool
-	Centered bool
-	Color    *color.NRGBA
-	Truncate bool
+	Size      unit.Sp
+	Bold      bool
+	Centered  bool
+	Color     *color.NRGBA
+	Truncate  bool
+	Underline bool
 }
 
 func (t Theme) Text(label string, opts ...TextOptions) layout.Widget {

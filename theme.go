@@ -1,24 +1,30 @@
 package cu
 
 import (
+	"image/color"
+
 	"gioui.org/f32"
 	"gioui.org/font"
+	"gioui.org/io/pointer"
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/text"
 	"gioui.org/unit"
-	"image"
-	"image/color"
+	"gioui.org/widget"
 )
 
 type Palette struct {
 	Text          color.NRGBA
 	TextSecondary color.NRGBA
+	TextDisabled  color.NRGBA
+
+	SelectionActive color.NRGBA
 
 	// The primary highlight color
 	Primary       color.NRGBA
 	ControlBorder color.NRGBA
+	Link          color.NRGBA
 }
 
 type Fonts struct {
@@ -37,81 +43,6 @@ type Theme struct {
 
 	LineHeightH1 unit.Sp
 	LineHeightH2 unit.Sp
-}
-
-type Flex struct {
-	widget   layout.Flex
-	gap      unit.Dp
-	children []layout.FlexChild
-}
-
-func (f Flex) Layout(gtx layout.Context) layout.Dimensions {
-	children := f.children
-	if f.gap > 0 {
-		var spacer layout.Widget
-		if f.widget.Axis == layout.Horizontal {
-			spacer = func(gtx layout.Context) layout.Dimensions {
-				return layout.Dimensions{
-					Size: image.Point{X: gtx.Dp(f.gap)},
-				}
-			}
-		} else {
-			spacer = func(gtx layout.Context) layout.Dimensions {
-				return layout.Dimensions{
-					Size: image.Point{Y: gtx.Dp(f.gap)},
-				}
-			}
-		}
-
-		n := []layout.FlexChild{}
-		for i, each := range children {
-			if i > 0 {
-				n = append(n, layout.Rigid(spacer))
-			}
-			n = append(n, each)
-		}
-		children = n
-	}
-
-	return f.widget.Layout(gtx, children...)
-}
-
-func (f Flex) Rigid(w layout.Widget) Flex {
-	f.children = append(f.children, layout.Rigid(w))
-	return f
-}
-
-func (f Flex) Flexed(weight float32, w layout.Widget) Flex {
-	f.children = append(f.children, layout.Flexed(weight, w))
-	return f
-}
-
-func (f Flex) RigidIf(condition bool, w layout.Widget) Flex {
-	if condition {
-		return f.Rigid(w)
-	}
-	return f
-}
-
-func (f Flex) FlexedIf(condition bool, weight float32, w layout.Widget) Flex {
-	if condition {
-		return f.Flexed(weight, w)
-	}
-	return f
-}
-
-type CuFlexOption func(w *Flex, t Theme)
-
-func Spacing(s layout.Spacing) func(w *Flex, t Theme) {
-	return func(w *Flex, t Theme) {
-		w.widget.Spacing = s
-	}
-}
-
-func Align(a layout.Alignment) func(w *Flex, t Theme) {
-	return func(w *Flex, t Theme) {
-		w.widget.Alignment = a
-	}
 }
 
 type Unit interface {
@@ -136,12 +67,6 @@ var (
 	M  Unit = Scaled(1)
 	L  Unit = Scaled(1.33)
 )
-
-func Gap(s Unit) func(w *Flex, t Theme) {
-	return func(w *Flex, t Theme) {
-		w.gap = s.Dp(t)
-	}
-}
 
 func (t Theme) FlexRow(options ...CuFlexOption) Flex {
 	l := Flex{
@@ -207,20 +132,59 @@ func (t Theme) Background(gtx layout.Context) {
 	paint.Fill(gtx.Ops, colorBackground)
 }
 
-func NewTheme(fonts []font.FontFace) *Theme {
-	//var colorText = color.NRGBA{R: 52, G: 65, B: 85, A: 0xff}
-	var colorText = color.NRGBA{R: 0, G: 0, B: 0, A: 0xff}
-	var colorTextSecondary = color.NRGBA{R: 0x6C, G: 0x70, B: 0x7E, A: 0xff}
-	var colorPrimary = color.NRGBA{59, 130, 246, 255}
-	var colorControlBorder = color.NRGBA{0xC9, 0xCC, 0xD6, 255}
+func (t Theme) Link(label string, button *widget.Clickable) layout.Widget {
+	return func(gtx C) D {
+		var hovered bool
+		if button.Hovered() {
+			hovered = true
+		}
 
-	t := &Theme{
+		return button.Layout(gtx, func(gtx C) D {
+			dim := t.Text(label, TextOptions{Color: &t.Color.Link})(gtx)
+
+			pointer.CursorPointer.Add(gtx.Ops)
+
+			if hovered {
+				p := clip.Path{}
+				p.Begin(gtx.Ops)
+				p.MoveTo(f32.Point{Y: float32(dim.Size.Y - 1)})
+				p.LineTo(f32.Point{Y: float32(dim.Size.Y - 1), X: float32(dim.Size.X)})
+
+				paint.FillShape(gtx.Ops,
+					t.Color.Link,
+					clip.Stroke{
+						Path:  p.End(),
+						Width: float32(1),
+					}.Op())
+			}
+
+			return dim
+		})
+	}
+}
+
+func NewTheme(fonts []font.FontFace) Theme {
+	// var colorText = color.NRGBA{R: 52, G: 65, B: 85, A: 0xff}
+	var (
+		colorText            = color.NRGBA{R: 0, G: 0, B: 0, A: 0xff}
+		colorTextSecondary   = color.NRGBA{R: 0x6C, G: 0x70, B: 0x7E, A: 0xff}
+		colorTextDisabled    = color.NRGBA{R: 0xA8, G: 0xAD, B: 0xBD, A: 0xFF}
+		colorPrimary         = color.NRGBA{R: 59, G: 130, B: 246, A: 255}
+		colorLink            = color.NRGBA{R: 0x31, G: 0x5F, B: 0xBD, A: 0xFF}
+		colorControlBorder   = color.NRGBA{R: 0xC9, G: 0xCC, B: 0xD6, A: 0xFF}
+		colorSelectionActive = color.NRGBA{R: 0xD4, G: 0xE2, B: 0xFF, A: 0xFF}
+	)
+
+	t := Theme{
 		Shaper: text.NewShaper(text.WithCollection(fonts)),
 		Color: Palette{
-			Text:          colorText,
-			TextSecondary: colorTextSecondary,
-			Primary:       colorPrimary,
-			ControlBorder: colorControlBorder,
+			Text:            colorText,
+			TextSecondary:   colorTextSecondary,
+			TextDisabled:    colorTextDisabled,
+			SelectionActive: colorSelectionActive,
+			Primary:         colorPrimary,
+			ControlBorder:   colorControlBorder,
+			Link:            colorLink,
 		},
 		TextSize:       unit.Sp(13.0),
 		TextSizeMedium: unit.Sp(12.0),

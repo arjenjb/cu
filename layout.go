@@ -39,6 +39,13 @@ func (t Theme) Mv(u Unit, w layout.Widget) layout.Widget {
 	}
 }
 
+func (t Theme) Mt(u Unit, w layout.Widget) layout.Widget {
+	return func(gtx layout.Context) layout.Dimensions {
+		s := u.Dp(t)
+		return layout.Inset{Top: s}.Layout(gtx, w)
+	}
+}
+
 func VSpacer(m unit.Dp) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
 		return layout.Spacer{Height: m}.Layout(gtx)

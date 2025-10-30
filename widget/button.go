@@ -1,13 +1,14 @@
 package widget
 
 import (
+	"image/color"
+
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/op/paint"
 	"gioui.org/text"
 	"gioui.org/widget"
 	. "github.com/arjenjb/cu"
-	"image/color"
 )
 
 var buttonTextColorPrimary = color.NRGBA{
@@ -29,7 +30,7 @@ var buttonTextColorDisabled = color.NRGBA{
 type ButtonWidget struct {
 	label     string
 	clickable *widget.Clickable
-	theme     *Theme
+	theme     Theme
 	options   buttonOptions
 }
 
@@ -92,7 +93,7 @@ type buttonOptions struct {
 	disabled bool
 }
 
-func Button(t *Theme, clickable *widget.Clickable, label string, options ...ButtonOptions) *ButtonWidget {
+func Button(t Theme, clickable *widget.Clickable, label string, options ...ButtonOptions) *ButtonWidget {
 	o := buttonOptions{
 		primary:  false,
 		big:      false,

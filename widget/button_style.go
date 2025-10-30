@@ -1,14 +1,15 @@
 package widget
 
 import (
+	"image"
+	"image/color"
+
 	"gioui.org/io/semantic"
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
 	"gioui.org/widget"
-	"image"
-	"image/color"
 )
 
 var colorDisabled = color.NRGBA{142, 142, 147, 255}
@@ -74,7 +75,7 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 
 				if !b.Primary || b.Disabled {
 					borderColor = borderColorNormal
-					w := gtx.Dp(1)
+					w := gtx.Dp(2)
 
 					paint.FillShape(gtx.Ops, borderColor,
 						clip.Stroke{

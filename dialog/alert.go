@@ -11,7 +11,7 @@ import (
 )
 
 type AlertDialog struct {
-	Theme *cu.Theme
+	Theme cu.Theme
 	// Title is shown in the titlebar, if left empty it will default to Message
 	Title string
 	// BigMessage is shown in H2 style at the top of window
@@ -62,7 +62,7 @@ func (a AlertDialog) Show() {
 	}
 }
 
-func NewAlertDialog(th *cu.Theme) *AlertDialog {
+func NewAlertDialog(th cu.Theme) *AlertDialog {
 	return &AlertDialog{
 		Theme:  th,
 		Title:  "Message",

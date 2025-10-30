@@ -2,12 +2,11 @@ package cu
 
 import (
 	_ "embed"
+
 	"gioui.org/font"
 	"gioui.org/font/opentype"
 	"gioui.org/text"
 )
-
-var th *Theme
 
 //go:embed fonts/FiraCode-Regular.ttf
 var monoFontRegularData []byte

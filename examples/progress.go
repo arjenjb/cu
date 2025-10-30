@@ -6,7 +6,14 @@ import (
 	"github.com/arjenjb/cu/widget"
 )
 
-func progressExample(th *cu.Theme, progress float32) layout.Widget {
+func determinateProgressExample(th cu.Theme, progress widget.LinearProgress) layout.Widget {
+	return th.FlexColumn().
+		Rigid(th.Text("Waiting for process to finish")).
+		Rigid(widget.NewProgressBar(th, progress).Layout).
+		Layout
+}
+
+func indeterminateProgressExample(th cu.Theme, progress widget.Progress) layout.Widget {
 	return th.FlexColumn().
 		Rigid(th.Text("Waiting for process to finish")).
 		Rigid(widget.NewProgressBar(th, progress).Layout).

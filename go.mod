@@ -13,7 +13,6 @@ require (
 )
 
 require (
-	gioui.org/cpu v0.0.0-20220412190645-f1e9e8c3b1f7 // indirect
 	gioui.org/shader v1.0.8 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-text/typesetting v0.3.0 // indirect
@@ -26,4 +25,8 @@ require (
 	golang.org/x/text v0.30.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+
+replace (
+	gioui.org v0.9.0 => github.com/ag5/gio v0.9.0-editor-patch
 )

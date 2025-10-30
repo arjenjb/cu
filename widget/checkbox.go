@@ -1,6 +1,9 @@
 package widget
 
 import (
+	"image"
+	"image/color"
+
 	"gioui.org/f32"
 	"gioui.org/layout"
 	"gioui.org/op"
@@ -8,12 +11,10 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/widget"
 	"github.com/arjenjb/cu"
-	"image"
-	"image/color"
 )
 
 type CheckboxWidget struct {
-	th    *cu.Theme
+	th    cu.Theme
 	label string
 	state *widget.Bool
 }
@@ -117,7 +118,7 @@ func (c CheckboxWidget) renderLabel(gtx layout.Context) layout.Dimensions {
 	return c.state.Layout(gtx, c.th.Text(c.label, cu.TextOptions{Truncate: true}))
 }
 
-func Checkbox(th *cu.Theme, ch *widget.Bool, label string) CheckboxWidget {
+func Checkbox(th cu.Theme, ch *widget.Bool, label string) CheckboxWidget {
 	return CheckboxWidget{
 		th:    th,
 		label: label,

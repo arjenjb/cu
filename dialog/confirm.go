@@ -11,7 +11,7 @@ import (
 )
 
 type confirmDialog struct {
-	Theme *cu.Theme
+	Theme cu.Theme
 	// Title is shown in the titlebar, if left empty it will default to Message
 	Title string
 	// BigMessage is shown in H2 style at the top of window
@@ -77,7 +77,7 @@ func (a confirmDialog) Show() bool {
 	return a.Accepted
 }
 
-func NewConfirmDialog(th *cu.Theme) *confirmDialog {
+func NewConfirmDialog(th cu.Theme) *confirmDialog {
 	return &confirmDialog{
 		Theme:       th,
 		Title:       "Confirm",
