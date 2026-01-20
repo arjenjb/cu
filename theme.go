@@ -154,7 +154,7 @@ func (t Theme) Link(label string, button *widget.Clickable) layout.Widget {
 					t.Color.Link,
 					clip.Stroke{
 						Path:  p.End(),
-						Width: float32(1),
+						Width: gtx.Metric.PxPerDp,
 					}.Op())
 			}
 
@@ -164,6 +164,7 @@ func (t Theme) Link(label string, button *widget.Clickable) layout.Widget {
 }
 
 func NewTheme(fonts []font.FontFace) Theme {
+
 	// var colorText = color.NRGBA{R: 52, G: 65, B: 85, A: 0xff}
 	var (
 		colorText            = color.NRGBA{R: 0, G: 0, B: 0, A: 0xff}

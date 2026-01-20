@@ -45,7 +45,10 @@ func (a inputDialog) Layout(gtx layout.Context) layout.Dimensions {
 				th.FlexRow(cu.Align(layout.Middle)).
 					Flexed(1, cu.HSpacer(0)).
 					Rigid(
-						widget.TextInput(th, a.Editor, a.Hint, 250, 0).Layout,
+						widget.TextInput(th, a.Editor, func(w *widget.TextInputWidget) {
+							w.Hint = a.Hint
+							w.Width = 250
+						}).Layout,
 					).
 					Flexed(1, cu.HSpacer(0)).
 					Layout,

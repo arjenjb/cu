@@ -1,6 +1,7 @@
 package widget
 
 import (
+	"gioui.org/font"
 	"gioui.org/layout"
 	"gioui.org/unit"
 	"gioui.org/widget"
@@ -9,18 +10,20 @@ import (
 )
 
 type TextInputWidget struct {
-	Editor *widget.Editor
-	Hint   string
-	theme  cu.Theme
-	Width  unit.Dp
-	Height unit.Dp
+	Editor   *widget.Editor
+	theme    cu.Theme
+	Hint     string
+	Width    unit.Dp
+	Height   unit.Dp
+	FontFace font.Typeface
+	TextSize unit.Sp
 }
 
 func (t TextInputWidget) Layout(gtx layout.Context) layout.Dimensions {
 	mt := material.NewTheme()
 	mt.Shaper = t.theme.Shaper
-	mt.Face = t.theme.Font.SansSerif.Typeface
-	mt.TextSize = t.theme.TextSize
+	mt.TextSize = t.TextSize
+	mt.Face = t.FontFace
 
 	return InputStyle{
 		CornerRadius: 4,
@@ -30,12 +33,19 @@ func (t TextInputWidget) Layout(gtx layout.Context) layout.Dimensions {
 	}.Layout(gtx, material.Editor(mt, t.Editor, t.Hint).Layout)
 }
 
-func TextInput(th cu.Theme, editor *widget.Editor, hint string, width unit.Dp, height unit.Dp) TextInputWidget {
-	return TextInputWidget{
-		theme:  th,
-		Editor: editor,
-		Hint:   hint,
-		Width:  width,
-		Height: height,
+type TextInputOption func(w *TextInputWidget)
+
+func TextInput(th cu.Theme, editor *widget.Editor, options ...TextInputOption) TextInputWidget {
+	w := TextInputWidget{
+		theme:    th,
+		Editor:   editor,
+		FontFace: th.Font.SansSerif.Typeface,
+		TextSize: th.TextSize,
 	}
+
+	for _, each := range options {
+		each(&w)
+	}
+
+	return w
 }

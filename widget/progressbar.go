@@ -42,6 +42,7 @@ type ProgressBar struct {
 	th       cu.Theme
 	Progress Progress
 	Style    ProgressBarStyle
+	Glow     bool
 }
 
 type Progress interface{ implementsProgress() }
@@ -69,6 +70,7 @@ func (p ProgressBar) Layout(gtx layout.Context) layout.Dimensions {
 	h := gtx.Dp(p.Style.Height)
 	r := h / 2
 
+	// Determine our size
 	dims := layout.Dimensions{
 		Size: image.Point{
 			X: gtx.Constraints.Max.X,
@@ -95,6 +97,23 @@ func (p ProgressBar) Layout(gtx layout.Context) layout.Dimensions {
 	// Render the progress on top
 	switch pr := p.Progress.(type) {
 	case LinearProgress:
+		if p.Glow {
+			const cycleDuration = 2000
+			var t = gtx.Now.Sub(time.Time(IndeterminedProgress.(indeterminedProgressType))).Milliseconds()
+			var progress = float64(t%cycleDuration) / cycleDuration
+
+			var v float64
+			if progress < 0.4 {
+				v = easeInOutCubic1(progress / 0.4)
+			} else {
+				v = 1.0 - easeInOutCubic1((progress-.4)/0.6)
+			}
+
+			c := p.Style.Foreground
+			c.A = uint8(v * 80)
+			paint.Fill(gtx.Ops, c)
+		}
+
 		defer clip.UniformRRect(image.Rectangle{
 			Min: image.Point{Y: y},
 			Max: image.Point{
@@ -102,6 +121,13 @@ func (p ProgressBar) Layout(gtx layout.Context) layout.Dimensions {
 				Y: y + h,
 			},
 		}, r).Push(gtx.Ops).Pop()
+
+		// For the glow effect
+		if p.Glow {
+			gtx.Execute(op.InvalidateCmd{
+				At: gtx.Now.Add(time.Duration(20) * time.Millisecond),
+			})
+		}
 
 	case indeterminedProgressType:
 		elapsed := gtx.Now.Sub(time.Time(pr)).Milliseconds()
@@ -117,7 +143,9 @@ func (p ProgressBar) Layout(gtx layout.Context) layout.Dimensions {
 			},
 		}, r).Push(gtx.Ops).Pop()
 
-		gtx.Execute(op.InvalidateCmd{})
+		gtx.Execute(op.InvalidateCmd{
+			At: gtx.Now.Add(time.Duration(20) * time.Millisecond),
+		})
 	}
 
 	paint.Fill(gtx.Ops, p.Style.Foreground)

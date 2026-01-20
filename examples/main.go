@@ -71,7 +71,7 @@ func main() {
 
 	var btnScrollDown = new(widget.Clickable)
 
-	var indeterminedProgress = widget2.NewIndeterminedProgress()
+	//var indeterminedProgress = widget2.NewIndeterminedProgress()
 
 	var w app.Window
 
@@ -119,8 +119,9 @@ func main() {
 					Rigid(th.Hr()).
 					Rigid(spinnerExample(th)).
 					Rigid(th.Hr()).
-					Rigid(determinateProgressExample(th, widget2.LinearProgress(progress))).
-					Rigid(indeterminateProgressExample(th, indeterminedProgress)).
+					Rigid(determinateRunningProgressExample(th, widget2.LinearProgress(progress))).
+					Rigid(determinateStalledProgressExample(th)).
+					Rigid(indeterminateProgressExample(th, widget2.IndeterminedProgress)).
 					Rigid(th.Hr()).
 					Rigid(dialogExample(gtx, th)).
 					Rigid(th.Hr()).
