@@ -27,6 +27,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace (
-	gioui.org v0.9.0 => github.com/ag5/gio v0.9.0-editor-patch
-)
+replace gioui.org v0.9.0 => github.com/ag5/gio v0.9.0-editor-patch
