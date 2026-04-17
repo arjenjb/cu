@@ -19,10 +19,18 @@ type AlertDialog struct {
 	// NormalMessage is an optional additional message shown in normal font
 	NormalMessage string
 
+	// AcceptLabel is the label for the accept button, defaults to "Ok"
+	AcceptLabel string
+
 	button *widget2.Clickable
 }
 
 func (a AlertDialog) Layout(gtx layout.Context) layout.Dimensions {
+	acceptLabel := a.AcceptLabel
+	if len(a.AcceptLabel) == 0 {
+		acceptLabel = "Ok"
+	}
+
 	th := a.Theme
 	th.Background(gtx)
 
@@ -30,7 +38,9 @@ func (a AlertDialog) Layout(gtx layout.Context) layout.Dimensions {
 		th.FlexColumn(cu.Gap(cu.S)).
 			RigidIf(len(a.BigMessage) > 0, th.H2(a.BigMessage)).
 			Rigid(th.Text(a.NormalMessage)).
-			Flexed(1, th.FlexRow(cu.Align(layout.End)).Flexed(1, cu.HSpacer(0)).Rigid(widget.Button(th, a.button, "Ok", widget.Primary()).Layout).Layout).
+			Flexed(1, th.FlexRow(cu.Align(layout.End)).
+				Flexed(1, cu.HSpacer(0)).
+				Rigid(widget.Button(th, a.button, acceptLabel, widget.Primary()).Layout).Layout).
 			Layout)(gtx)
 }
 
@@ -64,8 +74,9 @@ func (a AlertDialog) Show() {
 
 func NewAlertDialog(th cu.Theme) *AlertDialog {
 	return &AlertDialog{
-		Theme:  th,
-		Title:  "Message",
-		button: &widget2.Clickable{},
+		Theme:       th,
+		Title:       "Message",
+		AcceptLabel: "Ok",
+		button:      &widget2.Clickable{},
 	}
 }
