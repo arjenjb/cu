@@ -41,7 +41,7 @@ func (b *ButtonWidget) Layout(gtx layout.Context) layout.Dimensions {
 	}
 
 	gtx.Constraints.Min.X = gtx.Dp(80)
-	gtx.Constraints.Min.Y = gtx.Dp(32)
+	gtx.Constraints.Min.Y = gtx.Dp(36)
 
 	var color = buttonTextColor
 	if b.options.disabled {
