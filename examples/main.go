@@ -16,7 +16,9 @@ var checkable widget.Bool
 
 func textInputExample(gtx layout.Context, th cu.Theme, editor *widget.Editor) layout.Widget {
 	return th.FlexRow(cu.Gap(cu.XS)).
-		Rigid(widget2.TextInput(th, editor, "Hint", 0, 0).Layout).
+		Rigid(widget2.TextInput(th, editor, func(w *widget2.TextInputWidget) {
+			w.Hint = "Hint"
+		}).Layout).
 		Layout
 }
 
@@ -34,7 +36,9 @@ func textAreaExample(gtx layout.Context, th cu.Theme, editor *widget.Editor, btn
 	}
 
 	return th.FlexColumn(cu.Gap(cu.XS)).
-		Flexed(1.0, widget2.TextInput(th, editor, "Hint", 0, 0).Layout).
+		Flexed(1.0, widget2.TextInput(th, editor, func(w *widget2.TextInputWidget) {
+			w.Hint = "Hint"
+		}).Layout).
 		Rigid(widget2.Button(th, btn, "To end").Layout).
 		Layout
 }
@@ -88,7 +92,7 @@ func main() {
 
 	go func() {
 		w.Option(
-			app.Size(670, 560),
+			app.Size(670, 700),
 		)
 
 		th := cu.NewDefaultTheme()
