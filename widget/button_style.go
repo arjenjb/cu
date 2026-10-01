@@ -67,9 +67,11 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 					)
 				}
 
+				// The clip also trims the border stroke below to its inner half,
+				// so it must be pushed for disabled buttons too.
+				shape := clip.UniformRRect(inner, rr)
+				defer shape.Push(gtx.Ops).Pop()
 				if !b.Disabled {
-					shape := clip.UniformRRect(inner, rr)
-					defer shape.Push(gtx.Ops).Pop()
 					paint.Fill(gtx.Ops, background)
 				}
 
