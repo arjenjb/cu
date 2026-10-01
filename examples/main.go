@@ -2,6 +2,7 @@ package main
 
 import (
 	"log/slog"
+	"os"
 	"time"
 
 	"gioui.org/app"
@@ -97,10 +98,14 @@ func main() {
 
 		th := cu.NewDefaultTheme()
 
+		// Experiment: open menus in their own window
+		widget2.PopupMenus = true
+
 		for {
 			switch e := w.Event().(type) {
 			case app.DestroyEvent:
-				return
+				// app.Main never returns, so end the process with the window
+				os.Exit(0)
 
 			case app.FrameEvent:
 				gtx := app.NewContext(&ops, e)
@@ -128,6 +133,8 @@ func main() {
 					Rigid(indeterminateProgressExample(th, widget2.IndeterminedProgress)).
 					Rigid(th.Hr()).
 					Rigid(dialogExample(gtx, th)).
+					Rigid(th.Hr()).
+					Rigid(menuExample(gtx, th)).
 					Rigid(th.Hr()).
 					Flexed(1.0, textAreaExample(gtx, th, editArea, btnScrollDown)).
 					Layout)(gtx)
