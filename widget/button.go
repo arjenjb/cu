@@ -21,9 +21,9 @@ var buttonTextColor = color.NRGBA{
 	A: 255,
 }
 var buttonTextColorDisabled = color.NRGBA{
-	R: 128,
-	G: 128,
-	B: 128,
+	R: 0xA8,
+	G: 0xAD,
+	B: 0xBD,
 	A: 255,
 }
 

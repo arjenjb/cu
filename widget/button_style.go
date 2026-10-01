@@ -12,7 +12,7 @@ import (
 	"gioui.org/widget"
 )
 
-var colorDisabled = color.NRGBA{142, 142, 147, 255}
+var colorButtonDisabled = color.NRGBA{0xEB, 0xEC, 0xF0, 0xFF}
 
 // var colorPrimaryHovered = color.NRGBA{37, 99, 235, 255}
 // var colorPrimaryFocused = color.NRGBA{29, 78, 216, 255}
@@ -44,9 +44,7 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 				var background = colorNormal
 				var borderColor = colorNone
 
-				if b.Disabled {
-					background = colorNone
-				} else if b.Primary {
+				if b.Primary {
 					background = colorPrimary
 				}
 
@@ -54,7 +52,7 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 
 				switch {
 				case b.Disabled:
-					background = colorDisabled
+					background = colorButtonDisabled
 
 				case b.Button.Pressed():
 					// Draw the outline of an active button
@@ -67,15 +65,12 @@ func (b ButtonStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensio
 					)
 				}
 
-				// The clip also trims the border stroke below to its inner half,
-				// so it must be pushed for disabled buttons too.
 				shape := clip.UniformRRect(inner, rr)
 				defer shape.Push(gtx.Ops).Pop()
-				if !b.Disabled {
-					paint.Fill(gtx.Ops, background)
-				}
+				paint.Fill(gtx.Ops, background)
 
-				if !b.Primary || b.Disabled {
+				// Disabled buttons are drawn as a flat fill without a border
+				if !b.Primary && !b.Disabled {
 					borderColor = borderColorNormal
 					w := gtx.Dp(2)
 
