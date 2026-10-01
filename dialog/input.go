@@ -54,7 +54,7 @@ func (a inputDialog) Layout(gtx layout.Context) layout.Dimensions {
 					Layout,
 			).
 			Rigid(cu.VSpacer(12)).
-			Flexed(1, th.FlexRow(cu.Align(layout.End)).
+			Flexed(1, th.FlexRow(cu.Align(layout.End), cu.Gap(cu.XS)).
 				Flexed(1, cu.HSpacer(0)).
 				Rigid(widget.Button(th, a.btnCancel, a.CancelLabel).Layout).
 				Rigid(widget.Button(th, a.btnAccept, a.AcceptLabel, widget.Primary()).Layout).

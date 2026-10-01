@@ -35,7 +35,7 @@ func (a confirmDialog) Layout(gtx layout.Context) layout.Dimensions {
 		th.FlexColumn(cu.Gap(cu.S)).
 			RigidIf(len(a.BigMessage) > 0, th.H2(a.BigMessage)).
 			Rigid(th.Text(a.NormalMessage)).
-			Flexed(1, th.FlexRow(cu.Align(layout.End)).
+			Flexed(1, th.FlexRow(cu.Align(layout.End), cu.Gap(cu.XS)).
 				Flexed(1, cu.HSpacer(0)).
 				Rigid(widget.Button(th, a.btnCancel, a.CancelLabel).Layout).
 				Rigid(widget.Button(th, a.btnAccept, a.AcceptLabel, widget.Primary()).Layout).
