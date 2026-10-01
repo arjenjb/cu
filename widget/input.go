@@ -25,12 +25,21 @@ func (t TextInputWidget) Layout(gtx layout.Context) layout.Dimensions {
 	mt.TextSize = t.TextSize
 	mt.Face = t.FontFace
 
-	return InputStyle{
-		CornerRadius: 4,
-		Editor:       t.Editor,
-		Width:        t.Width,
-		Height:       t.Height,
-	}.Layout(gtx, material.Editor(mt, t.Editor, t.Hint).Layout)
+	menu := inputMenuFor(t.Editor)
+
+	return layout.Stack{}.Layout(gtx,
+		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+			return InputStyle{
+				CornerRadius: 4,
+				Editor:       t.Editor,
+				Width:        t.Width,
+				Height:       t.Height,
+			}.Layout(gtx, material.Editor(mt, t.Editor, t.Hint).Layout)
+		}),
+		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
+			return menu.Layout(gtx, t.theme, t.Editor)
+		}),
+	)
 }
 
 type TextInputOption func(w *TextInputWidget)
