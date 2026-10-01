@@ -11,6 +11,9 @@ import (
 	"gioui.org/widget"
 )
 
+// colorInputDisabled sits halfway between white and the theme background.
+var colorInputDisabled = color.NRGBA{0xFB, 0xFC, 0xFD, 0xFF}
+
 type InputStyle struct {
 	CornerRadius unit.Dp
 	Editor       *widget.Editor
@@ -29,16 +32,11 @@ func (b InputStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimension
 			var background = colorNormal
 			var borderColor = colorNone
 
-			if b.Editor.ReadOnly {
-				background = colorNone
-
-			}
-
 			rr := gtx.Dp(b.CornerRadius)
 
 			switch {
 			case b.Editor.ReadOnly:
-				background = colorDisabled
+				background = colorInputDisabled
 			case gtx.Focused(b.Editor):
 				// Draw the outline of an active button
 				w := gtx.Dp(2)
@@ -50,11 +48,9 @@ func (b InputStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimension
 				)
 			}
 
-			if !b.Editor.ReadOnly {
-				shape := clip.UniformRRect(inner, rr)
-				defer shape.Push(gtx.Ops).Pop()
-				paint.Fill(gtx.Ops, background)
-			}
+			shape := clip.UniformRRect(inner, rr)
+			defer shape.Push(gtx.Ops).Pop()
+			paint.Fill(gtx.Ops, background)
 
 			// draw the border
 			borderColor = borderColorNormal
