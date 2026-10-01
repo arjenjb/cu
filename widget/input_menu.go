@@ -29,8 +29,6 @@ const (
 	menuPadding    unit.Dp = 5
 )
 
-var menuBorderColor = color.NRGBA{A: 0x1F}
-
 // inputMenu is the right click menu of a text input. TextInputWidget is
 // rebuilt every frame, so the menu state is kept per editor in inputMenus.
 type inputMenu struct {
@@ -114,12 +112,14 @@ func (m *inputMenu) Layout(gtx layout.Context, th cu.Theme, editor *widget.Edito
 
 				menuShadow(gtx, rect, rr)
 
+				// The clip trims the 2dp border stroke to its inner 1dp.
 				shape := clip.UniformRRect(rect, rr)
-				paint.FillShape(gtx.Ops, colorNormal, shape.Op(gtx.Ops))
-				paint.FillShape(gtx.Ops, menuBorderColor,
+				defer shape.Push(gtx.Ops).Pop()
+				paint.Fill(gtx.Ops, colorNormal)
+				paint.FillShape(gtx.Ops, th.Color.ControlBorder,
 					clip.Stroke{
 						Path:  shape.Path(gtx.Ops),
-						Width: float32(gtx.Dp(1)) / 2,
+						Width: float32(gtx.Dp(2)),
 					}.Op(),
 				)
 				return layout.Dimensions{Size: gtx.Constraints.Min}
