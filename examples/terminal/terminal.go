@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"gioui.org/app"
 	"gioui.org/io/system"
 	"gioui.org/op"
@@ -101,7 +102,7 @@ func main() {
 	os.Stderr = w.Screen
 
 	slog.SetDefault(slog.New(
-		tint.NewHandler(os.Stderr, &tint.Options{
+		tint.NewTextHandler(os.Stderr, &tint.Options{
 			Level:      slog.LevelDebug,
 			TimeFormat: "15:04:05",
 			NoColor:    os.Getenv("NO_COLOR") == "1",
